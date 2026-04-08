@@ -6,11 +6,10 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src/ ./src/
-COPY config/ ./config/
 
 EXPOSE 8080
 
 ENV PORT=8080
 ENV PYTHONUNBUFFERED=1
 
-CMD ["python", "src/main.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--timeout", "120", "src.app:app"]

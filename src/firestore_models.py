@@ -1,7 +1,10 @@
-"""Firestore document models for Areda Quotations.
+"""Firestore document models for GO Documents.
 
-Collection: areda_quotations
+Database: go-documents (asia-southeast1)
+Collection: document-records
 Running code format: AQ-26XXX (year prefix + 3-digit running number)
+
+Live URL: docs.leka.studio/<document_type>/<doc_id>
 """
 
 from __future__ import annotations
@@ -20,6 +23,29 @@ def _utcnow() -> datetime:
 # ----------------------------------------------------------------------
 # Enums
 # ----------------------------------------------------------------------
+
+BASE_URL = "https://docs.leka.studio"
+
+DOCUMENT_TYPE_PATHS = {
+    "quotation": "quotations",
+    "submission": "submissions",
+    "datasheet": "datasheets",
+    "certificate": "certificates",
+}
+
+
+def make_document_url(document_type: str, doc_id: str) -> str:
+    """Generate the live URL for a document record."""
+    path = DOCUMENT_TYPE_PATHS.get(document_type, document_type + "s")
+    return f"{BASE_URL}/{path}/{doc_id}"
+
+
+class DocumentType(str, Enum):
+    QUOTATION = "quotation"
+    SUBMISSION = "submission"
+    DATASHEET = "datasheet"
+    CERTIFICATE = "certificate"
+
 
 class QuotationStatus(str, Enum):
     DRAFT = "draft"
@@ -135,6 +161,7 @@ class AredaQuotation(BaseModel):
     # --- Document Type (for multi-type collection) ---
     document_type: str = "quotation"
     template_id: str = "areda-quotation"
+    document_url: str = ""            # https://docs.leka.studio/quotations/<doc_id>
 
     # --- Identity ---
     quotation_code: str               # AQ-26001, AQ-26002, ...

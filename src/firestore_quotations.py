@@ -1,7 +1,9 @@
-"""Firestore operations for Areda Quotations.
+"""Firestore operations for GO Documents.
 
-Handles CRUD, running number generation, and PDF attachment management
-for the areda_quotations collection.
+Handles CRUD, running number generation, URL generation, and PDF
+attachment management for the document-records collection.
+
+Live URL: https://docs.leka.studio/<document_type>/<doc_id>
 """
 
 from __future__ import annotations
@@ -20,6 +22,7 @@ from firestore_models import (
     QuotationCounter,
     QuotationStatus,
     ScheduleMilestone,
+    make_document_url,
 )
 
 DATABASE = "go-documents"
@@ -167,6 +170,12 @@ def create_quotation(
 
     doc_ref = db.collection(COLLECTION).document()
     doc_ref.set(quotation.to_firestore())
+
+    # Generate and store document URL
+    url = make_document_url("quotation", doc_ref.id)
+    doc_ref.update({"document_url": url})
+    quotation.document_url = url
+
     return doc_ref.id, quotation
 
 
