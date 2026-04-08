@@ -171,8 +171,8 @@ def create_quotation(
     doc_ref = db.collection(COLLECTION).document()
     doc_ref.set(quotation.to_firestore())
 
-    # Generate and store document URL
-    url = make_document_url("quotation", doc_ref.id)
+    # Generate and store document URL (brand-aware)
+    url = make_document_url("quotation", doc_ref.id, quotation.template_id)
     doc_ref.update({"document_url": url})
     quotation.document_url = url
 

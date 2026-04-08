@@ -26,6 +26,12 @@ def _utcnow() -> datetime:
 
 BASE_URL = "https://docs.leka.studio"
 
+# Brand-specific domains: documents with these template prefixes
+# are served under the brand's docs subdomain.
+BRAND_DOMAINS = {
+    "areda": "https://docs.aredaatelier.com",
+}
+
 DOCUMENT_TYPE_PATHS = {
     "quotation": "quotations",
     "submission": "submissions",
@@ -34,10 +40,19 @@ DOCUMENT_TYPE_PATHS = {
 }
 
 
-def make_document_url(document_type: str, doc_id: str) -> str:
-    """Generate the live URL for a document record."""
+def make_document_url(document_type: str, doc_id: str, template_id: str = "") -> str:
+    """Generate the live URL for a document record.
+
+    Areda-branded documents -> docs.aredaatelier.com
+    Everything else         -> docs.leka.studio
+    """
     path = DOCUMENT_TYPE_PATHS.get(document_type, document_type + "s")
-    return f"{BASE_URL}/{path}/{doc_id}"
+    base = BASE_URL
+    for brand_prefix, brand_url in BRAND_DOMAINS.items():
+        if template_id.startswith(brand_prefix):
+            base = brand_url
+            break
+    return f"{base}/{path}/{doc_id}"
 
 
 class DocumentType(str, Enum):

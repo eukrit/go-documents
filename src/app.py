@@ -1,7 +1,8 @@
 """GO Documents — Document serving app.
 
 Serves generated documents at:
-  https://docs.leka.studio/<document_type>/<doc_id>
+  https://docs.aredaatelier.com/<type>/<doc_id>  (Areda-branded documents)
+  https://docs.leka.studio/<type>/<doc_id>       (all other documents)
 
 Document types: quotations, submissions, datasheets, certificates
 
@@ -10,7 +11,7 @@ All pages are noindex/nofollow — not intended for public search.
 
 import os
 
-from flask import Flask, Response, abort, redirect, render_template_string
+from flask import Flask, Response, abort, redirect, render_template_string, request
 from google.cloud import firestore, storage
 
 app = Flask(__name__)
@@ -25,6 +26,12 @@ VALID_TYPES = {
     "datasheets": "datasheet",
     "certificates": "certificate",
 }
+
+# Brand routing: template_id prefix -> canonical domain
+BRAND_DOMAINS = {
+    "areda": "docs.aredaatelier.com",
+}
+DEFAULT_DOMAIN = "docs.leka.studio"
 
 NOINDEX_HEADERS = {
     "X-Robots-Tag": "noindex, nofollow, noarchive, nosnippet",
@@ -95,6 +102,28 @@ def list_documents(doc_type_path):
     return Response(html, headers=NOINDEX_HEADERS)
 
 
+# ---------- Redirect helper ----------
+
+def _get_canonical_domain(template_id: str) -> str:
+    """Return the canonical domain for a template."""
+    for brand_prefix, brand_domain in BRAND_DOMAINS.items():
+        if template_id.startswith(brand_prefix):
+            return brand_domain
+    return DEFAULT_DOMAIN
+
+
+def _maybe_redirect(data: dict, doc_type_path: str, doc_id: str):
+    """301 redirect if the request is on the wrong domain for this document."""
+    template_id = data.get("template_id", "")
+    canonical = _get_canonical_domain(template_id)
+    current_host = request.host.split(":")[0]
+    if current_host != canonical:
+        return redirect(
+            f"https://{canonical}/{doc_type_path}/{doc_id}", code=301
+        )
+    return None
+
+
 # ---------- Serve single document ----------
 
 @app.route("/<doc_type_path>/<doc_id>")
@@ -113,6 +142,11 @@ def serve_document(doc_type_path, doc_id):
     data = doc.to_dict()
     if data.get("document_type") != doc_type:
         abort(404)
+
+    # Redirect to canonical domain if needed
+    redir = _maybe_redirect(data, doc_type_path, doc_id)
+    if redir:
+        return redir
 
     # Check for generated HTML in GCS
     gcs_html_path = data.get("generated_html_gcs")
