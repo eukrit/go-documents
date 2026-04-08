@@ -1,127 +1,159 @@
-# goco-project-template
+# GO Documents
 
-GO Corporation — Cloud Run project template with CI/CD, AI evaluation loop, and structured development workflow.
+Centralized document generation system for GO Corporation. Generates professional quotations, invoices, and other business documents in English and Thai with Firestore-backed storage.
 
-## Quick Start
+## Architecture
 
-### From Template
-```bash
-gh repo clone eukrit/goco-project-template my-new-project -- --template
-cd my-new-project
-chmod +x setup.sh verify.sh scripts/*.sh
-./setup.sh my-new-project eukrit
+```
+go-documents/
+  src/
+    firestore_models.py       # Pydantic models for document-records
+    firestore_quotations.py   # CRUD + running number for quotations
+  quotation-template.html     # EN quotation HTML template (Areda design system)
+  quotation-template-th.html  # TH quotation HTML template
+  AQ-*-*.html                 # Generated quotation files (EN + TH)
+  freight_calculator.py       # China-Thai landed cost calculator
+  agents/china-thai/          # Freight calculation agent (Gift Somlak rates)
+  images/                     # Logo + product images
 ```
 
-### Manual Setup
-```bash
-git clone https://github.com/eukrit/goco-project-template.git my-new-project
-cd my-new-project
-chmod +x setup.sh verify.sh scripts/*.sh
-./setup.sh my-new-project eukrit
-```
+## Firestore Database
 
-## Project Structure
-```
-project-root/
-├── manifest.json            # LOCAL ONLY — gitignored
-├── manifest.example.json    # Committed template (ENV: and SECRET: refs only)
-├── .env                     # LOCAL ONLY — gitignored (local dev fallback)
-├── .env.example             # Committed template for .env
-├── credentials/             # LOCAL ONLY — gitignored (symlinked credential files)
-├── CLAUDE.md                # Claude Code session instructions + credential docs
-├── CHANGELOG.md             # Auto-updated each build
-├── cloudbuild.yaml          # GCP Cloud Build config (secrets from Secret Manager)
-├── verify.sh                # Post-build verification (includes credential checks)
-├── Dockerfile               # Cloud Run container
-├── package.json             # Node.js dependencies
-├── scripts/
-│   ├── load-secrets.sh      # Pull secrets from GCP Secret Manager → .env
-│   └── push-secrets.sh      # Push local credentials → GCP Secret Manager
-├── src/
-│   └── index.js             # Cloud Run app skeleton
-├── docs/
-│   ├── Summary.html         # Executive summary (auto-generated)
-│   ├── DeploymentPlan.md    # Task backlog + AI improvements
-│   └── BuildPlans/
-│       └── BuildPlan_v1.0.0.md
-└── .github/
-    └── PULL_REQUEST_TEMPLATE/
-        └── pull_request_template.md
-```
-
-## Credential Management
-
-### Hierarchy (Priority Order)
-1. **GCP Secret Manager** — primary for CI/CD and Cloud Run (all secrets live here)
-2. **Service Account JSON** — for GCP API auth (Sheets, Drive, etc.)
-3. **MCP Connectors** — Gmail, Calendar, Notion, Slack, Figma (no local creds needed)
-4. **Local .env** — fallback for local development only
-
-### First-Time Setup
-```bash
-# Option A: Pull from GCP Secret Manager (preferred)
-./scripts/load-secrets.sh ai-agents-go
-
-# Option B: Manual — copy from centralized Credentials folder
-cp .env.example .env
-# Edit .env with values from: Credentials Claude Code/Instructions/API Access Master Instructions.txt
-```
-
-### Provisioning Secrets to GCP (one-time per secret)
-```bash
-# Push all credentials to Secret Manager
-./scripts/push-secrets.sh ai-agents-go
-
-# Or individual secrets:
-echo -n "YOUR_VALUE" | gcloud secrets versions add SECRET_NAME --data-file=- --project=ai-agents-go
-```
-
-### Secret Manager Inventory
-| Secret | Used By |
+| Property | Value |
 |---|---|
-| `peak-api-token` | Peak Accounting API |
-| `peak-connect-key` | Peak Accounting API |
-| `n8n-webhook-key` | n8n webhook auth |
-| `xero-client-id` | Xero OAuth |
-| `xero-client-secret` | Xero OAuth |
-| `notion-api-key` | Notion API |
-| `slack-bot-token` | Slack bot |
-| `slack-webhook-url` | Slack notifications |
-| `figma-token` | Figma API |
+| Database | `go-documents` |
+| Region | `asia-southeast1` |
+| GCP Project | `ai-agents-go` |
+| Type | Firestore Native |
 
-### Safety Rules
-- **NEVER** commit `.env`, `manifest.json`, `credentials/`, or `*.key` files
-- **NEVER** hardcode credentials in source code
-- **ALWAYS** use `ENV:` or `SECRET:` references in manifest.json
-- All credential patterns are blocked by `.gitignore`
-- `verify.sh` checks for leaked credentials in git
+### Collections
 
-## Development Workflow
+| Collection | Purpose |
+|---|---|
+| `document-templates` | Template schemas (field definitions, defaults, payment splits) |
+| `document-records` | All generated documents — quotations, invoices, POs, etc. |
+| `document_counters` | Running number counters per document type per year |
 
-1. **Plan** — Create Build Plan in Notion, get approval
-2. **Develop** — Work on `dev/feature-name` branch with conventional commits
-3. **Verify** — Run `./verify.sh` locally
-4. **Push** — Push to GitHub → Cloud Build runs tests
-5. **AI Eval** — Claude reviews verify-report.json, scores the build
-6. **Merge** — PR to `main` → Cloud Build deploys to Cloud Run
-7. **Sign-off** — Human reviews and approves
+### document-templates
 
-## Branch Strategy
-- `main` — production, auto-deploys via Cloud Build
-- `dev/feature-name` — development, build + test only
+Each template defines the schema, defaults, and payment splits for a document type.
 
-## Commit Convention
+| Document ID | Template | Code Format |
+|---|---|---|
+| `areda-quotation` | Areda Atelier Quotation | `AQ-{YY}{NNN}` |
+
+### document-records
+
+All generated documents live here, distinguished by `document_type` field.
+
+| Field | Description |
+|---|---|
+| `document_type` | `quotation`, `invoice`, `purchase_order`, etc. |
+| `template_id` | References `document-templates/{id}` |
+| `quotation_code` | Running code (AQ-26001, AQ-26002, ...) |
+| `language` | `en` or `th` |
+| `status` | `draft`, `sent`, `accepted`, `rejected`, `expired` |
+
+### document_counters
+
+| Document ID | Format | Example |
+|---|---|---|
+| `quotation-2026` | `{type}-{year}` | Tracks last quotation number for 2026 |
+
+## Quotation Templates
+
+### Design System
+- Brand: Areda Atelier (by GO Corporation)
+- Font: Manrope (EN) + Noto Sans Thai (TH)
+- A4 portrait, print-optimized
+- Color tokens: charcoal `#252828`, cream `#E1DFD4`, taupe `#928A83`
+
+### Template Features
+- Company header with logo
+- Customer + document info grid
+- Product specification box
+- Product reference image gallery
+- Line items table with section headers
+- Totals block (subtotal, VAT 7%, grand total)
+- Estimated schedule (duration-based, no fixed dates)
+- Scope of supply / terms & conditions
+- Payment terms table (configurable splits)
+- Signature block + footer
+
+### Payment Splits
+- **Supply only** (default for imported goods): 50% deposit / 40% before shipment / 10% on delivery
+- **Supply + install**: 30% deposit / 30% before shipment / 30% on delivery / 10% after handover
+
+## Freight Calculator
+
+China-Thai landed cost calculator using confirmed rates:
+
+| Rate | Source | Value |
+|---|---|---|
+| Sea LCL (CBM) | Gift Somlak rate card | THB 4,600/CBM |
+| Sea LCL (KGS) | Gift Somlak rate card | THB 35/KG |
+| Land (CBM) | Gift Somlak rate card | THB 7,200/CBM |
+| Insurance | Chubb via Logimark | 0.45% of CIF x 110%, min USD 40 |
+| Clearance fee | Forwarder | ~THB 3,000 |
+| Last-mile | Bangkok delivery | THB 1,500-3,500 |
+
+Billing rule: `max(CBM-based, KGS-based)` — standard LCL practice.
+
+## Usage
+
+### Create a new quotation
+
+1. Prepare supplier data (PI, pricing, specs)
+2. Run freight calculator to determine landed cost and margin
+3. Create HTML from template (EN + TH)
+4. Push to Firestore:
+
+```python
+from src.firestore_quotations import create_quotation
+from src.firestore_models import CustomerInfo, ProposerInfo, LineItem
+
+doc_id, quotation = create_quotation(
+    customer=CustomerInfo(company="Acme Co.", ...),
+    project_name="Villa Project",
+    subject="Folding Door Hardware",
+    proposed_by=ProposerInfo(name="Sales Rep", ...),
+    items=[LineItem(item_no=1, product_code="AA-HW-FD01", ...)],
+    language="en",
+)
 ```
-feat(scope): description    # new feature
-fix(scope): description     # bug fix
-docs(scope): description    # documentation
-chore(scope): description   # config/infra
-test(scope): description    # tests
+
+### Generate PDF
+
+```bash
+# Edge (Windows)
+msedge --headless --print-to-pdf="output.pdf" --print-to-pdf-no-header --no-margins "file:///path/to/quotation.html"
+
+# Chrome (Mac/Linux)
+google-chrome --headless --print-to-pdf="output.pdf" --print-to-pdf-no-header --no-margins "file:///path/to/quotation.html"
 ```
+
+## Credentials
+
+- GCP service account: `claude@ai-agents-go.iam.gserviceaccount.com`
+- Key file: stored in `Credentials Claude Code/` folder (never committed)
+- Set `GOOGLE_APPLICATION_CREDENTIALS` env var or use `.env`
 
 ## GCP Setup
-- Project: `ai-agents-go`
+- Project: `ai-agents-go` (538978391890)
 - Region: `asia-southeast1`
 - Service account: `claude@ai-agents-go.iam.gserviceaccount.com`
-- Secrets: GCP Secret Manager (see inventory above)
-- CI/CD: Cloud Build triggers on push to `main` (deploy) and `dev/*` (test)
+
+## Related Repos
+
+| Repo | Purpose |
+|---|---|
+| `eukrit/business-automation` | ERP gateway, shared libs, dashboard |
+| `eukrit/accounting-automation` | Peak API, Xero, MCP server |
+| `eukrit/procurement-automation` | RFQ workflows, vendor sourcing |
+
+## Existing Quotations
+
+| Code | Product | Supplier | Selling Price |
+|---|---|---|---|
+| AQ-26001 | ED 70 Aluminum Folding Door — Thermal Break, Double Glazed | Foshan | THB 99,000 |
+| AQ-26002 | OPK Multi-Panel Folding Wooden Door Hardware System | Guangdong OPK | THB 19,500 |

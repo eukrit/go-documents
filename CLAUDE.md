@@ -1,17 +1,16 @@
-# [PROJECT_NAME]
+# go-documents
 
 ## Project Identity
-- Project: [PROJECT_NAME]
+- Project: go-documents
 - Owner: Eukrit / GO Corporation Co., Ltd.
 - Notion Dashboard: https://www.notion.so/gocorp/Coding-Project-Dashboard-Claude-32c82cea8bb080f1bbd7f26770ae9e80
-- GitHub Repo: https://github.com/eukrit/[PROJECT_NAME]
+- GitHub Repo: https://github.com/eukrit/go-documents
 - GCP Project ID: ai-agents-go
 - GCP Project Number: 538978391890
-- Cloud Run Service: [PROJECT_NAME]
+- Firestore Database: go-documents (asia-southeast1)
 - Region: asia-southeast1
 - Service Account: claude@ai-agents-go.iam.gserviceaccount.com
-- Artifact Registry: asia-southeast1-docker.pkg.dev/ai-agents-go/[PROJECT_NAME]
-- Language: [node|python]
+- Language: python
 
 ## Related Repos
 - **accounting-automation** (master) — Peak API, Xero, MCP server → `eukrit/accounting-automation`

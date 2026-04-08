@@ -31,7 +31,7 @@
 
   "apis": {
     "peak": {
-      "base_url": "http://peakengineapidev.azurewebsites.net",
+      "base_url": "https://peakengineapi.azurewebsites.net",
       "connect_id": "ENV:PEAK_CONNECT_ID",
       "connect_key": "ENV:PEAK_CONNECT_KEY",
       "application_code": "ENV:PEAK_APP_CODE",
