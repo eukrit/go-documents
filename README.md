@@ -7,14 +7,17 @@ Centralized document generation system for GO Corporation. Generates professiona
 ```
 go-documents/
   src/
-    firestore_models.py       # Pydantic models for document-records
-    firestore_quotations.py   # CRUD + running number for quotations
-  quotation-template.html     # EN quotation HTML template (Areda design system)
-  quotation-template-th.html  # TH quotation HTML template
-  AQ-*-*.html                 # Generated quotation files (EN + TH)
-  freight_calculator.py       # China-Thai landed cost calculator
-  agents/china-thai/          # Freight calculation agent (Gift Somlak rates)
-  images/                     # Logo + product images
+    firestore_models.py              # Pydantic models for quotations
+    firestore_quotations.py          # CRUD + running number for quotations
+    firestore_inspection_models.py   # Pydantic models for inspection certificates
+    firestore_inspections.py         # CRUD + running number for inspections
+  quotation-template.html            # EN quotation HTML template (Areda design system)
+  quotation-template-th.html         # TH quotation HTML template
+  playground-inspection-template.html # Playground inspection cert (Leka design system, Rev R1)
+  AQ-*-*.html                        # Generated quotation files (EN + TH)
+  freight_calculator.py              # China-Thai landed cost calculator
+  agents/china-thai/                 # Freight calculation agent (Gift Somlak rates)
+  images/                            # Logo + product images
 ```
 
 ## Firestore Database
@@ -41,6 +44,7 @@ Each template defines the schema, defaults, and payment splits for a document ty
 | Document ID | Template | Code Format |
 |---|---|---|
 | `areda-quotation` | Areda Atelier Quotation | `AQ-{YY}{NNN}` |
+| `leka-playground-inspection` | Leka Studio Playground Safety Inspection Certificate | `SO{YY}-{NNN}` |
 
 ### document-records
 
@@ -59,6 +63,7 @@ All generated documents live here, distinguished by `document_type` field.
 | Document ID | Format | Example |
 |---|---|---|
 | `quotation-2026` | `{type}-{year}` | Tracks last quotation number for 2026 |
+| `inspection-2025` | `{type}-{year}` | Tracks last inspection number for 2025 |
 
 ## Quotation Templates
 
@@ -150,6 +155,52 @@ google-chrome --headless --print-to-pdf="output.pdf" --print-to-pdf-no-header --
 | `eukrit/business-automation` | ERP gateway, shared libs, dashboard |
 | `eukrit/accounting-automation` | Peak API, Xero, MCP server |
 | `eukrit/procurement-automation` | RFQ workflows, vendor sourcing |
+
+## Playground Inspection Certificates
+
+### Design System
+- Brand: Leka Studio — Playground Safety Division
+- Font: Manrope
+- A4 portrait, print-optimized (2-page: full cert + short form)
+- Color tokens: navy `#182557`, purple `#8003FF`, cream `#FFF9E6`, magenta `#970260`
+
+### Template Features
+- Leka Studio header with SVG logo
+- Gradient accent bars (top + bottom)
+- Site information grid (8 fields)
+- Warranty period field (R1 addition — 12 months from handover)
+- Inspection scope + criteria referenced
+- Summary statement with checkbox (Substantial Compliance / Corrective Action)
+- Referenced documents list
+- Inspector credentials block (CPSI)
+- Signature row + limitations disclaimer
+- Page 2: Short-form pass certificate
+
+### Template Placeholders
+| Placeholder | Description |
+|---|---|
+| `{{report_no}}` | Certificate / Report No. (SO25-023) |
+| `{{inspection_date}}` | Inspection date (March 12, 2026) |
+| `{{playground_name}}` | Playground name |
+| `{{inspection_type}}` | Type of inspection |
+| `{{site_location}}` | Full address |
+| `{{site_location_short}}` | Short address (Page 2) |
+| `{{reinspection_date}}` | Recommended reinspection |
+| `{{owner_operator}}` | Owner / operator name |
+| `{{age_group}}` | Intended user age group |
+| `{{warranty_start}}` | Warranty start date |
+| `{{warranty_end}}` | Warranty end date |
+| `{{warranty_months}}` | Warranty duration |
+| `{{inspector_name}}` | Inspector name |
+| `{{cpsi_cert_no}}` | CPSI certificate number |
+| `{{cpsi_expiration}}` | CPSI expiration date |
+| `{{inspector_credential}}` | Full credential title |
+
+### Existing Inspections
+
+| Code | Playground | Client | Status |
+|---|---|---|---|
+| SO25-023 | Polo Club Playground | RBSC Polo Club (Worawuth Kraitong) | Issued — Substantial Compliance |
 
 ## Existing Quotations
 
