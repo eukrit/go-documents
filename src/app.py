@@ -4,7 +4,7 @@ Serves generated documents at:
   https://docs.aredaatelier.com/<type>/<doc_id>  (Areda-branded documents)
   https://docs.leka.studio/<type>/<doc_id>       (all other documents)
 
-Document types: quotations, submissions, datasheets, certificates
+Document types: quotations, submissions, datasheets, certificates, sales-sheets
 
 All pages are noindex/nofollow — not intended for public search.
 """
@@ -25,6 +25,7 @@ VALID_TYPES = {
     "submissions": "submission",
     "datasheets": "datasheet",
     "certificates": "certificate",
+    "sales-sheets": "sales-sheet",
 }
 
 # Brand routing: template_id prefix -> canonical domain
