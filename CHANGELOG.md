@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2026-04-20
+
+### Removed
+- `tensile-technic-playground-inspection` template (both the Firestore doc and the local HTML). Playground inspections remain a Leka Studio offering only (`leka-playground-inspection`).
+
+### Added
+- New document type `shade-inspection` for Tensile Technic:
+  - `src/firestore_shade_inspection_models.py` — Pydantic model (`ShadeInspectionCertificate`) with sub-models `SiteInfo`, `ClientInfo`, `InspectorInfo`, `FindingItem`, `SystemFindings`, `WarrantyBlock`; enums `ShadeInspectionStatus`, `InspectionScope`, `ComplianceResult`, `Severity`, `StructureType`.
+  - `DocumentType.SHADE_INSPECTION = "shade-inspection"` + URL path `/shade-inspections/<doc_id>` (app.py + firestore_models.py).
+  - `shade-inspection-template-tensile-technic.html` — A4 certificate with Tensile Technic design tokens, 6 inspection-system tables (Membrane / Seams / Tension Hardware / Structural / Drainage / Environmental), severity chips (OK / Advisory / Monitor / Action 30d / Immediate), compliance result banner, standards appendix, and signoff.
+  - Code format: `TSI-{YY}-{NNN}` (e.g., `TSI-26-001`).
+  - Firestore template doc `document-templates/tensile-technic-shade-inspection` published with standards list, default systems, severity levels, compliance results, and post-event wind threshold (80 km/h).
+
+### Standards referenced on the template
+- ASCE/SEI 55 — Tensile Membrane Structures (design, fabrication, installation, maintenance)
+- NFPA 701 — Fire Tests for Flame Propagation of Textiles and Films
+- ASTM D751 / D5034 / D4851 — Coated-fabric and mechanical test methods
+- AS 2428 — Shade fabrics for commercial and domestic use (Australia)
+- AS/NZS 1170 — Structural design actions (wind / load / seismic)
+- EN 13782 — Temporary structures — tents — safety (Europe)
+- IFAI / Tensile Membrane Association — Tensile Structures Maintenance Guide
+
+### Research note
+Serge Ferrari and IFAI public pages did not return structured inspection checklists (404 / redirect / empty search page). Template was built from my working knowledge of the above standards. Flag any items to revise against your internal engineering sign-off.
+
 ## [1.4.0] - 2026-04-20
 
 ### Added

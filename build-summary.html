@@ -29,13 +29,14 @@
 
   <h2>Latest build</h2>
   <p>
-    Version <strong>1.4.0</strong> ·
+    Version <strong>1.5.0</strong> ·
     <span class="badge badge-success">success</span>
   </p>
   <p>
-    Added <code>business_unit</code> tagging (Leka Studio / Tensile Technic), registered 3 Tensile Technic templates,
-    shipped 4 Tensile Technic HTML templates with a distinct design system, and seeded
-    <strong>50 Tensile Technic material-approval records</strong> (<code>TT-26-001</code>..<code>TT-26-050</code>) for every Serge Ferrari PVC product.
+    Removed the Tensile Technic playground template and introduced a dedicated
+    <code>shade-inspection</code> document type for tensile / shade structures —
+    new Pydantic model, HTML certificate (<code>TSI-{YY}-{NNN}</code>), and Firestore template
+    referencing ASCE/SEI 55, NFPA 701, AS 2428, AS/NZS 1170, EN 13782, and the IFAI/TMA maintenance guide.
   </p>
   <p>
     <a href="CHANGELOG.md">Full build log</a>
@@ -45,6 +46,12 @@
   <table>
     <thead><tr><th>Version</th><th>Date</th><th>Summary</th><th>Status</th></tr></thead>
     <tbody>
+      <tr>
+        <td>1.5.0</td>
+        <td>2026-04-20</td>
+        <td>Replaced TT playground inspection with <code>shade-inspection</code> type (model, HTML certificate, Firestore template; ASCE/SEI 55 + AS 2428 + IFAI/TMA).</td>
+        <td><span class="badge badge-success">success</span></td>
+      </tr>
       <tr>
         <td>1.4.0</td>
         <td>2026-04-20</td>

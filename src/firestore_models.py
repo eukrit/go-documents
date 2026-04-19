@@ -39,6 +39,7 @@ DOCUMENT_TYPE_PATHS = {
     "certificate": "certificates",
     "sales-sheet": "sales-sheets",
     "material-approval": "material-approvals",
+    "shade-inspection": "shade-inspections",
 }
 
 
@@ -64,6 +65,7 @@ class DocumentType(str, Enum):
     CERTIFICATE = "certificate"
     SALES_SHEET = "sales-sheet"
     MATERIAL_APPROVAL = "material-approval"
+    SHADE_INSPECTION = "shade-inspection"
 
 
 class QuotationStatus(str, Enum):
