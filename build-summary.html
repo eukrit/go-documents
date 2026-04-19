@@ -29,12 +29,13 @@
 
   <h2>Latest build</h2>
   <p>
-    Version <strong>1.2.2</strong> ·
+    Version <strong>1.3.0</strong> ·
     <span class="badge badge-success">success</span>
   </p>
   <p>
-    Fixed gallery caption clipping (image now in a 4:3 <code>.img-wrap</code>; card height is content-driven).
-    Added tablet/phone breakpoints for gallery, palette, hero, project, approvals, and material grids.
+    Authored <a href="docs/material-approval-SOP.md">material-approval SOP</a>, seeded <strong>49 Serge Ferrari PVC products</strong>
+    into Firestore (<code>MA26-002</code>..<code>MA26-050</code>), and shipped an idempotent bulk importer
+    (<code>push_material_approvals_bulk.py</code>) backed by <code>data/material-approvals.seed.json</code>.
   </p>
   <p>
     <a href="CHANGELOG.md">Full build log</a>
@@ -44,6 +45,12 @@
   <table>
     <thead><tr><th>Version</th><th>Date</th><th>Summary</th><th>Status</th></tr></thead>
     <tbody>
+      <tr>
+        <td>1.3.0</td>
+        <td>2026-04-19</td>
+        <td>Material-approval SOP + 49 Serge Ferrari PVC stubs (<code>MA26-002</code>..<code>MA26-050</code>) via seed/bulk importer.</td>
+        <td><span class="badge badge-success">success</span></td>
+      </tr>
       <tr>
         <td>1.2.2</td>
         <td>2026-04-19</td>

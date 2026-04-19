@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2026-04-19
+
+### Added
+- `docs/material-approval-SOP.md` — end-to-end standard operating procedure (data gathering, HTML template, Firestore registration, bulk import, style rules, ship checklist).
+- `data/material-approvals.seed.json` — source-of-truth seed for 49 PVC-coated Serge Ferrari products (Soltis, Tenseo, Stamoid, Flexlight, Batyline, Seemee Decolit). Explicitly PVC-free families excluded (Canatex, Eden Life, Biobrane).
+- `push_material_approvals_bulk.py` — idempotent bulk importer; supports `--dry-run`; ensures the `leka-material-approval` template exists; advances the counter without regression.
+
+### Firestore writes
+- `document-records/MA26-002` … `document-records/MA26-050` (49 new material-approval stubs, status `draft`, project `Material Library`).
+- `document_counters/material-approval-2026` advanced to `last_number=50`.
+
+Each seeded record is a library stub — titles, family, URL, and category are authoritative; images/colors/datasheet facts are empty by design and must be enriched per the SOP before a project RFA is issued.
+
 ## [1.2.2] - 2026-04-19
 
 ### Fixed
