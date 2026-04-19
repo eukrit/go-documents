@@ -26,6 +26,7 @@ VALID_TYPES = {
     "datasheets": "datasheet",
     "certificates": "certificate",
     "sales-sheets": "sales-sheet",
+    "material-approvals": "material-approval",
 }
 
 # Brand routing: template_id prefix -> canonical domain

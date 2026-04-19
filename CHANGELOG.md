@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-04-19
+
+### Added
+- `material-approval` document type registered in `document-templates`, `document-records`, and `document_counters`
+- `src/firestore_material_approval_models.py` — Pydantic models (`MaterialApproval`, `MaterialRecord`, `MaterialImage`, `ColorSwatch`, `ApprovalParty`)
+- `push_material_approval_firestore.py` — seeds `leka-material-approval` template + `MA26-001` (Soltis 502 Proof) record
+- `src/firestore_models.py`: `DocumentType.MATERIAL_APPROVAL` enum + `"material-approval": "material-approvals"` URL path
+- `src/app.py`: `material-approvals` added to `VALID_TYPES` (serves at `/material-approvals/<doc_id>`)
+- `docs/materials/soltis-502-proof.html`: added Pictures gallery + Color Palette section (8 reference swatches — White/Ivory/Sand/Grey/Anthracite/Black/Taupe/Brown)
+
+### Firestore writes
+- `document-templates/leka-material-approval`
+- `document-records/MA26-001`
+- `document_counters/material-approval-2026` (last_number=1)
+
 ## [1.1.0] - 2026-04-19
 
 ### Added
