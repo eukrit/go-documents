@@ -299,42 +299,45 @@
     .gallery-item {
       border-radius: var(--radius-md);
       overflow: hidden;
-      background: linear-gradient(135deg, rgba(128, 3, 255, 0.06), rgba(24, 37, 87, 0.04));
       border: 1px solid var(--leka-line);
       aspect-ratio: 4 / 3;
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
-      padding: 14px;
-      color: var(--leka-muted);
+      background: #fff;
+    }
+    .gallery-item figure {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .gallery-item img {
+      width: 100%;
+      flex: 1;
+      object-fit: cover;
+      display: block;
+      background: linear-gradient(135deg, rgba(128, 3, 255, 0.06), rgba(24, 37, 87, 0.04));
+    }
+    .gallery-item figcaption {
+      padding: 10px 12px;
       font-size: 12px;
-      line-height: 1.5;
+      color: var(--leka-muted);
+      line-height: 1.4;
+      border-top: 1px solid var(--leka-line);
     }
-    .gallery-item .ph-badge {
-      align-self: flex-start;
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      font-weight: 800;
-      color: var(--leka-violet);
-      background: rgba(128, 3, 255, 0.08);
-      padding: 4px 8px;
-      border-radius: 999px;
-      margin-bottom: auto;
-    }
-    .gallery-item a {
+    .gallery-item figcaption strong {
+      display: block;
       color: var(--leka-ink);
-      font-weight: 600;
-      text-decoration: none;
-      word-break: break-word;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 2px;
     }
-    .gallery-item a:hover { text-decoration: underline; }
 
     /* Color palette */
     .palette-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
       margin-top: 12px;
     }
     .swatch {
@@ -515,18 +518,37 @@
         <h2 class="section-title">Pictures</h2>
         <div class="gallery-grid">
           <div class="gallery-item">
-            <span class="ph-badge">Source</span>
-            <a href="https://www.sergeferrari.com/en/products/soltis/502-proof/" target="_blank" rel="noopener">
-              Serge Ferrari — Soltis 502 Proof product page
-            </a>
+            <figure>
+              <img src="https://www.sergeferrari.com/app/uploads/Soltis-502-Proof-shade-sail-3-1920x1536.jpg"
+                   alt="Orange tensioned Soltis 502 Proof shade sail on a modern terrace"
+                   loading="lazy">
+              <figcaption>
+                <strong>Tensioned shade sail</strong>
+                Soltis 502 Proof application — courtesy Serge Ferrari.
+              </figcaption>
+            </figure>
           </div>
           <div class="gallery-item">
-            <span class="ph-badge">Placeholder</span>
-            <span>Shade sail application — attach project photo.</span>
+            <figure>
+              <img src="https://www.sergeferrari.com/app/uploads/Lodge-by-Autonomous-Tent-Co.-at-Treebones-Resort-3-1-1920x1264.jpg"
+                   alt="Waterfront lodge with stretched Soltis fabric roof"
+                   loading="lazy">
+              <figcaption>
+                <strong>Lodge canopy</strong>
+                Autonomous Tent Co. — Treebones Resort — courtesy Serge Ferrari.
+              </figcaption>
+            </figure>
           </div>
           <div class="gallery-item">
-            <span class="ph-badge">Placeholder</span>
-            <span>Pergola roof application — attach project photo.</span>
+            <figure>
+              <img src="https://www.sergeferrari.com/app/uploads/Festival-international-des-jardins-Chaumont-sur-Loire-4-1920x1440.jpg"
+                   alt="Red flower-shaped Soltis shade structures at Festival international des jardins, Chaumont-sur-Loire"
+                   loading="lazy">
+              <figcaption>
+                <strong>Festival des jardins, Chaumont-sur-Loire</strong>
+                Fabric shade structures — courtesy Serge Ferrari.
+              </figcaption>
+            </figure>
           </div>
         </div>
       </article>
@@ -534,41 +556,35 @@
       <article class="section">
         <h2 class="section-title">Color Palette</h2>
         <div class="palette-grid">
-          <div class="swatch">
-            <div class="chip" style="background:#F5F2E8;"></div>
-            <div class="meta"><strong>White</strong><span>502-50202 &middot; satin</span></div>
-          </div>
-          <div class="swatch">
-            <div class="chip" style="background:#E8DBC0;"></div>
-            <div class="meta"><strong>Ivory</strong><span>502-50264 &middot; satin</span></div>
-          </div>
-          <div class="swatch">
-            <div class="chip" style="background:#D4B896;"></div>
-            <div class="meta"><strong>Sand</strong><span>502-50166 &middot; satin</span></div>
-          </div>
-          <div class="swatch">
-            <div class="chip" style="background:#888A8C;"></div>
-            <div class="meta"><strong>Grey</strong><span>502-50167 &middot; satin</span></div>
-          </div>
-          <div class="swatch">
-            <div class="chip" style="background:#3A3C40;"></div>
-            <div class="meta"><strong>Anthracite</strong><span>502-50258 &middot; satin</span></div>
-          </div>
-          <div class="swatch">
-            <div class="chip" style="background:#1A1A1A;"></div>
-            <div class="meta"><strong>Black</strong><span>502-50268 &middot; satin</span></div>
-          </div>
-          <div class="swatch">
-            <div class="chip" style="background:#8A7868;"></div>
-            <div class="meta"><strong>Taupe</strong><span>502-50169 &middot; satin</span></div>
-          </div>
-          <div class="swatch">
-            <div class="chip" style="background:#6B4F3A;"></div>
-            <div class="meta"><strong>Brown</strong><span>502-50207 &middot; satin</span></div>
-          </div>
+          <div class="swatch"><div class="chip" style="background:#F5F3EC;"></div><div class="meta"><strong>White</strong><span>502V3-51969C</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#EAE4D6;"></div><div class="meta"><strong>Pearl White</strong><span>502V3-51970C</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#F2EEDF;"></div><div class="meta"><strong>Enamel White</strong><span>502V3-51971C</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#D7C9A8;"></div><div class="meta"><strong>Champagne</strong><span>502V3-51979C</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#C2B08C;"></div><div class="meta"><strong>Hemp</strong><span>502V3-50265C</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#A8825A;"></div><div class="meta"><strong>Antelope</strong><span>502V3-51973C</span></div></div>
+
+          <div class="swatch"><div class="chip" style="background:#A39A8C;"></div><div class="meta"><strong>Boulder</strong><span>502V3-2171C</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#A7A29A;"></div><div class="meta"><strong>Concrete</strong><span>502V3-2167C</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#888A8C;"></div><div class="meta"><strong>Aluminium</strong><span>502V3-2168C</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#6A6A68;"></div><div class="meta"><strong>Titanium</strong><span>502V3-51972C</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#3A3C40;"></div><div class="meta"><strong>Anthracite</strong><span>502V3-1354C</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#1A1A1A;"></div><div class="meta"><strong>Black</strong><span>502V3-8450C</span></div></div>
+
+          <div class="swatch"><div class="chip" style="background:#E8D76A;"></div><div class="meta"><strong>Lemon</strong><span>502V3-50674C</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#E2C94E;"></div><div class="meta"><strong>Buttercup</strong><span>502V3-2166C</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#E8A585;"></div><div class="meta"><strong>Peach</strong><span>502V3-51974C</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#E6762C;"></div><div class="meta"><strong>Orange</strong><span>502V3-8204C</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#D9422B;"></div><div class="meta"><strong>Poppy</strong><span>502V3-8255C</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#B03A2E;"></div><div class="meta"><strong>Pepper</strong><span>502V3-2012C</span></div></div>
+
+          <div class="swatch"><div class="chip" style="background:#A94E1F;"></div><div class="meta"><strong>Rust</strong><span>502V3-50283C</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#9B2743;"></div><div class="meta"><strong>Raspberry</strong><span>502V3-2150C</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#5A1A25;"></div><div class="meta"><strong>Burgundy</strong><span>502V3-8284C</span></div></div>
         </div>
         <div class="palette-note">
-          Reference swatches — hex values are approximations for layout only. Verify against manufacturer fan-deck / physical sample before final approval.
+          Color names and <code>502V3-xxxxC</code> codes are the official Serge Ferrari Soltis 502 Proof range.
+          Hex values are display approximations — verify against manufacturer fan-deck / physical sample before final approval.
+          Source: <a href="https://www.sergeferrari.com/en/products/soltis/502-proof/" target="_blank" rel="noopener">sergeferrari.com</a>
         </div>
       </article>
 

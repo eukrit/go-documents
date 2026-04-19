@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2026-04-19
+
+### Changed
+- `docs/materials/soltis-502-proof.html` + `MA26-001` record: replaced placeholder/approximate palette with the official Serge Ferrari Soltis 502 Proof range (21 colors, manufacturer codes `502V3-xxxxC`)
+- Gallery now uses 3 real Serge Ferrari product photos (shade sail, Treebones Resort lodge, Chaumont-sur-Loire festival)
+- Hex values labeled as display approximations; manufacturer codes are authoritative
+
 ## [1.2.0] - 2026-04-19
 
 ### Added
