@@ -92,6 +92,7 @@ class PlaygroundInspectionCertificate(BaseModel):
     # --- Document Type (for multi-type collection) ---
     document_type: str = "playground_inspection"
     template_id: str = "leka-playground-inspection"
+    business_unit: str = "Leka Studio"   # Leka Studio | Tensile Technic | ...
 
     # --- Identity ---
     report_no: str                        # SO25-023, SO25-024, ...

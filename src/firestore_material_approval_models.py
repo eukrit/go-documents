@@ -135,6 +135,7 @@ class MaterialApproval(BaseModel):
     # --- Document Type (for multi-type collection) ---
     document_type: str = "material-approval"
     template_id: str = "leka-material-approval"
+    business_unit: str = "Leka Studio"           # Leka Studio | Tensile Technic | ...
     document_url: str = ""                       # https://docs.leka.studio/material-approvals/<doc_id>
 
     # --- Identity ---

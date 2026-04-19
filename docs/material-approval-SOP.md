@@ -1,13 +1,21 @@
 # Material Approval Page — Standard Operating Procedure
 
 Author: GO Corporation Co., Ltd.
-Last updated: 2026-04-19
+Last updated: 2026-04-20
 Owning project: `go-documents`
-Template: `leka-material-approval`
-Code format: `MA{YY}-{NNN}` (e.g., `MA26-001`)
 
-This SOP explains how to produce a Leka Studio **Request for Material Approval** page
-end-to-end — from data gathering to Firestore record to live URL.
+| Business Unit | Template ID | Code format | Counter doc |
+|---|---|---|---|
+| **Leka Studio** | `leka-material-approval` | `MA{YY}-{NNN}` (e.g., `MA26-001`) | `document_counters/material-approval-{YYYY}` |
+| **Tensile Technic** | `tensile-technic-material-approval` | `TT-{YY}-{NNN}` (e.g., `TT-26-001`) | `document_counters/material-approval-{YYYY}-tensile-technic` |
+
+Every record carries a `business_unit` field — `"Leka Studio"` or `"Tensile Technic"`.
+Pick the right template + code prefix + counter for the business unit that owns
+the submission.
+
+This SOP explains how to produce a **Request for Material Approval** page
+end-to-end — from data gathering to Firestore record to live URL — for either
+business unit.
 
 ---
 

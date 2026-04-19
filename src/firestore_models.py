@@ -180,6 +180,7 @@ class AredaQuotation(BaseModel):
     # --- Document Type (for multi-type collection) ---
     document_type: str = "quotation"
     template_id: str = "areda-quotation"
+    business_unit: str = "Leka Studio"   # Leka Studio | Tensile Technic | ...
     document_url: str = ""            # https://docs.leka.studio/quotations/<doc_id>
 
     # --- Identity ---

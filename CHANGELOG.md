@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2026-04-20
+
+### Added
+- **Business Unit tagging** — every document and template in Firestore now carries a `business_unit` field (`Leka Studio` or `Tensile Technic`). Pydantic models updated in `src/firestore_models.py`, `src/firestore_inspection_models.py`, `src/firestore_material_approval_models.py`.
+- `migrate_business_unit.py` — idempotent backfill; tags existing `document-templates` and `document-records` with `business_unit="Leka Studio"` when missing.
+- `push_tensile_technic_templates.py` — registers 3 Tensile Technic templates in `document-templates`.
+- `push_material_approvals_tensile_technic.py` — mirrors the Leka MA library under Tensile Technic: 50 records (`TT-26-001` Soltis 502 Proof fully enriched; `TT-26-002`..`TT-26-050` stubs mapping 1-to-1 with the 49 Leka stubs).
+- Four Tensile Technic HTML templates (design tokens from Figma `HOwMIRipr2i6fH5ihbzhDz`):
+  - `material-approval-template-tensile-technic.html`
+  - `quotation-template-tensile-technic.html` (EN)
+  - `quotation-template-tensile-technic-th.html` (TH)
+  - `playground-inspection-template-tensile-technic.html`
+- SOP updated ([docs/material-approval-SOP.md](docs/material-approval-SOP.md)) with a business-unit routing table.
+
+### Firestore writes
+- **Migration:** 56 records/templates tagged `business_unit="Leka Studio"` (53 records + 3 templates — Areda quotations and inspection also included per the explicit instruction to tag all as Leka Studio).
+- **Tensile Technic templates:** `document-templates/tensile-technic-quotation`, `.../tensile-technic-playground-inspection`, `.../tensile-technic-material-approval`.
+- **Tensile Technic material approvals:** `document-records/TT-26-001` … `TT-26-050` (50 records, `business_unit="Tensile Technic"`, all 50 Serge Ferrari PVC products).
+- **Counter:** `document_counters/material-approval-2026-tensile-technic` → `last_number=50`.
+
+### Design-system note
+Figma file `HOwMIRipr2i6fH5ihbzhDz` was reachable via MCP, but Page 1 is an empty canvas and variable extraction requires an active node selection in the desktop app. The TT tokens shipped here (charcoal navy `#0F1B2E` + tension-orange `#D06B2A` + bone `#F3EEE5`, Inter + JetBrains Mono) are a reference palette distinct from Leka Studio. Sync with the Figma file when specific node IDs are provided.
+
 ## [1.3.0] - 2026-04-19
 
 ### Added
