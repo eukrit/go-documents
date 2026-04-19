@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soltis 502 Proof - Material Submission</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --leka-navy: #182557;
+      --leka-cream: #fff9e6;
+      --leka-violet: #8003ff;
+      --leka-surface: #f6f4ec;
+      --leka-ink: #20305f;
+      --leka-muted: #5f6888;
+      --leka-line: rgba(24, 37, 87, 0.14);
+      --leka-card: #ffffff;
+      --leka-shadow: 0 24px 60px rgba(24, 37, 87, 0.12);
+      --page-width: 1120px;
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Manrope', sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(128, 3, 255, 0.18), transparent 22%),
+        linear-gradient(180deg, #eef1f8 0%, #f6f4ec 48%, #ffffff 100%);
+      color: var(--leka-ink);
+    }
+
+    .page {
+      max-width: var(--page-width);
+      margin: 32px auto;
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 36px;
+      box-shadow: var(--leka-shadow);
+      overflow: hidden;
+    }
+
+    .hero {
+      position: relative;
+      padding: 52px 56px 40px;
+      background:
+        linear-gradient(140deg, rgba(128, 3, 255, 0.18), transparent 28%),
+        linear-gradient(180deg, rgba(255, 249, 230, 0.06), rgba(255, 249, 230, 0)),
+        var(--leka-navy);
+      color: var(--leka-cream);
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      left: 56px;
+      top: 58px;
+      width: 8px;
+      height: 132px;
+      border-radius: 999px;
+      background: var(--leka-violet);
+    }
+
+    .hero-copy {
+      padding-left: 24px;
+      max-width: 760px;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.72;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(42px, 5vw, 68px);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      max-width: 680px;
+      margin: 18px 0 0;
+      font-size: 20px;
+      line-height: 1.5;
+      color: rgba(255, 249, 230, 0.78);
+    }
+
+    .hero-grid,
+    .project-grid,
+    .material-grid,
+    .approvals-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 36px; }
+    .project-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .material-grid { grid-template-columns: 1.2fr 0.8fr; align-items: start; }
+    .approvals-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .hero-stat,
+    .field,
+    .approval-card {
+      border-radius: var(--radius-md);
+    }
+
+    .hero-stat {
+      padding: 18px 20px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .hero-stat-label,
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .hero-stat-label {
+      opacity: 0.7;
+      margin-bottom: 8px;
+    }
+
+    .hero-stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .content { padding: 34px 34px 42px; }
+
+    .section {
+      background: var(--leka-card);
+      border: 1px solid var(--leka-line);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 20px;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 10px;
+      height: 28px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--leka-violet), #9f58ff);
+    }
+
+    .field {
+      padding: 18px 18px 20px;
+      background: linear-gradient(180deg, rgba(24, 37, 87, 0.02), rgba(24, 37, 87, 0.04));
+      border: 1px solid var(--leka-line);
+      min-height: 112px;
+    }
+
+    .field-label {
+      margin-bottom: 10px;
+      color: var(--leka-muted);
+    }
+
+    .field-value {
+      font-size: 16px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .field-value.muted { color: var(--leka-muted); }
+
+    .material-card {
+      padding: 24px;
+      background: var(--leka-surface);
+      border: 1px solid rgba(24, 37, 87, 0.08);
+      border-radius: var(--radius-lg);
+    }
+
+    .material-card h3 {
+      margin: 0 0 6px;
+      font-size: 30px;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+    }
+
+    .material-card .code {
+      display: inline-flex;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(128, 3, 255, 0.08);
+      color: var(--leka-violet);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .material-card p {
+      margin: 18px 0 0;
+      color: var(--leka-muted);
+      line-height: 1.7;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(24, 37, 87, 0.07);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .asset-panel {
+      display: grid;
+      gap: 14px;
+    }
+
+    .asset-box {
+      min-height: 152px;
+      border-radius: var(--radius-lg);
+      border: 1px dashed rgba(24, 37, 87, 0.24);
+      background:
+        linear-gradient(180deg, rgba(128, 3, 255, 0.03), rgba(24, 37, 87, 0.02)),
+        #ffffff;
+      padding: 18px;
+    }
+
+    .asset-box h4 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--leka-muted);
+    }
+
+    .asset-box ul {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.7;
+    }
+
+    .asset-box a {
+      color: var(--leka-ink);
+      word-break: break-word;
+    }
+
+    .approval-card {
+      padding: 20px;
+      border: 1px solid var(--leka-line);
+      background: linear-gradient(180deg, rgba(24, 37, 87, 0.02), rgba(24, 37, 87, 0.01));
+      min-height: 220px;
+    }
+
+    .approval-card h3 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    .approval-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: var(--leka-muted);
+      line-height: 1.8;
+    }
+
+    .signature-line {
+      margin-top: 46px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(24, 37, 87, 0.22);
+      color: var(--leka-muted);
+      font-size: 14px;
+    }
+
+    .footer-note {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      padding: 4px 4px 0;
+      color: var(--leka-muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .project-grid,
+      .material-grid,
+      .approvals-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero,
+      .content {
+        padding-left: 22px;
+        padding-right: 22px;
+      }
+
+      .page { margin: 12px; }
+    }
+
+    @media print {
+      body { background: #ffffff; }
+      .page {
+        margin: 0;
+        max-width: none;
+        box-shadow: none;
+        border-radius: 0;
+        border: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Leka Studio Material Submission</p>
+        <h1>Soltis 502 Proof</h1>
+        <p>Waterproof PVC-coated membrane made with 100% recycled polyester yarns. This ready-to-use material page is generated from the Leka submission template for review, reference, and future approvals.</p>
+      </div>
+      <div class="hero-grid">
+        <div class="hero-stat">
+          <span class="hero-stat-label">Document Ref</span>
+          <span class="hero-stat-value">MAT-SOLTIS-502-PROOF</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-label">Issue Date</span>
+          <span class="hero-stat-value">2026-04-01</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-label">Project</span>
+          <span class="hero-stat-value">Material Library</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-label">Prepared By</span>
+          <span class="hero-stat-value">GO Corporation Co., Ltd.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="content">
+      <article class="section">
+        <h2 class="section-title">Project Snapshot</h2>
+        <div class="project-grid">
+          <div class="field">
+            <span class="field-label">Client / Owner</span>
+            <div class="field-value">Internal material library record for future submissions.</div>
+          </div>
+          <div class="field">
+            <span class="field-label">Consultant / Designer</span>
+            <div class="field-value">To be assigned per project submission.</div>
+          </div>
+          <div class="field">
+            <span class="field-label">Main Application</span>
+            <div class="field-value">Exterior solar protection, shade sails, and pergola roofs.</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Material Record</h2>
+        <div class="material-grid">
+          <div class="material-card">
+            <span class="code">502V3</span>
+            <h3>Soltis 502 Proof</h3>
+            <p>Colorful, durable, waterproof membrane made with 100% recycled polyester yarns. The datasheet highlights a satin finish, strong UV durability, ease of upkeep, glare control, and reliable long-term dimensional stability through Serge Ferrari's Précontraint technology.</p>
+            <div class="pill-row">
+              <span class="pill">Category: Fabric Membrane</span>
+              <span class="pill">Application: Exterior Solar Protection</span>
+              <span class="pill">Use Cases: Shade Sails / Pergola Roofs</span>
+            </div>
+          </div>
+
+          <div class="asset-panel">
+            <div class="asset-box">
+              <h4>Attachments</h4>
+              <ul>
+                <li><a href="file:///C:/Users/Eukrit/Downloads/Soltis%20502V3%20Proof%20-%20new%20brochure%20card%20%288pp%29.pdf">Soltis 502V3 Proof brochure card (8pp)</a></li>
+              </ul>
+            </div>
+            <div class="asset-box">
+              <h4>Images</h4>
+              <ul>
+                <li>Use the brochure pages as visual reference for finish and color options.</li>
+                <li>Project-specific submission images can be appended later.</li>
+              </ul>
+            </div>
+            <div class="asset-box">
+              <h4>Manufacturer Product URL</h4>
+              <div class="field-value muted"><a href="https://www.sergeferrari.com/en/products/soltis/502-proof/">https://www.sergeferrari.com/en/products/soltis/502-proof/</a></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Submission Notes</h2>
+        <div class="field" style="min-height: 164px;">
+          <span class="field-label">Formal Note</span>
+          <div class="field-value">Soltis 502 Proof is suitable as a waterproof fabric membrane for exterior solar protection. According to the brochure, its main applications include shade sails, fixed pergola roofs, and retractable pergola roofs. This material page can be reused as a starting point for future project-specific RFAs.</div>
+        </div>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Key Datasheet Facts</h2>
+        <div class="project-grid">
+          <div class="field">
+            <span class="field-label">Composition</span>
+            <div class="field-value">100% recycled PET yarns with PVC coating.</div>
+          </div>
+          <div class="field">
+            <span class="field-label">Weight / Thickness</span>
+            <div class="field-value">590 g/m² and 0.45 mm thickness.</div>
+          </div>
+          <div class="field">
+            <span class="field-label">Width</span>
+            <div class="field-value">180 cm roll width.</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Approval Routing</h2>
+        <div class="approvals-grid">
+          <div class="approval-card">
+            <h3>Consultant</h3>
+            <ul class="approval-list">
+              <li>[ ] For Approval</li>
+              <li>[ ] For Information</li>
+              <li>[ ] Others</li>
+            </ul>
+            <div class="signature-line">Signature / Date</div>
+          </div>
+          <div class="approval-card">
+            <h3>Designer</h3>
+            <ul class="approval-list">
+              <li>[ ] For Approval</li>
+              <li>[ ] For Information</li>
+              <li>[ ] Others</li>
+            </ul>
+            <div class="signature-line">Signature / Date</div>
+          </div>
+          <div class="approval-card">
+            <h3>Project Owner</h3>
+            <ul class="approval-list">
+              <li>[ ] For Approval</li>
+              <li>[ ] For Information</li>
+              <li>[ ] Others</li>
+            </ul>
+            <div class="signature-line">Signature / Date</div>
+          </div>
+        </div>
+      </article>
+
+      <div class="footer-note">
+        <span>leka.studio - Never Done Playing</span>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
