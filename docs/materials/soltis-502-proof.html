@@ -298,12 +298,11 @@
     }
     .gallery-item {
       border-radius: var(--radius-md);
-      overflow: hidden;
       border: 1px solid var(--leka-line);
-      aspect-ratio: 4 / 3;
+      background: #fff;
       display: flex;
       flex-direction: column;
-      background: #fff;
+      min-width: 0;
     }
     .gallery-item figure {
       margin: 0;
@@ -311,26 +310,37 @@
       flex-direction: column;
       height: 100%;
     }
-    .gallery-item img {
+    .gallery-item .img-wrap {
+      position: relative;
       width: 100%;
-      flex: 1;
-      object-fit: cover;
-      display: block;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      border-top-left-radius: var(--radius-md);
+      border-top-right-radius: var(--radius-md);
       background: linear-gradient(135deg, rgba(128, 3, 255, 0.06), rgba(24, 37, 87, 0.04));
     }
+    .gallery-item img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
     .gallery-item figcaption {
-      padding: 10px 12px;
+      padding: 12px 14px 14px;
       font-size: 12px;
       color: var(--leka-muted);
-      line-height: 1.4;
+      line-height: 1.45;
       border-top: 1px solid var(--leka-line);
+      flex: 1;
     }
     .gallery-item figcaption strong {
       display: block;
       color: var(--leka-ink);
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
 
     /* Color palette */
@@ -379,9 +389,30 @@
       line-height: 1.5;
     }
 
-    @media (max-width: 720px) {
+    /* ---- Breakpoints for Pictures + Palette ---- */
+    /* Desktop default: 3-col gallery, 6-col palette (above). */
+
+    /* Tablet / small laptop */
+    @media (max-width: 1040px) {
+      .palette-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    }
+    @media (max-width: 900px) {
+      .gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+      .palette-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    /* Phone landscape */
+    @media (max-width: 640px) {
+      .palette-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+      .swatch .chip { height: 70px; }
+    }
+    /* Phone portrait */
+    @media (max-width: 480px) {
       .gallery-grid { grid-template-columns: 1fr; }
-      .palette-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .palette-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .swatch .chip { height: 64px; }
+      .swatch .meta { padding: 8px 10px 10px; }
+      .swatch .meta strong { font-size: 12px; }
+      .swatch .meta span { font-size: 10px; }
     }
 
     .signature-line {
@@ -402,21 +433,37 @@
       font-size: 13px;
     }
 
-    @media (max-width: 980px) {
+    /* ---- Layout breakpoints ---- */
+    /* Large tablet / small laptop: keep multi-column but reduce padding */
+    @media (max-width: 1040px) {
+      .content { padding: 28px 26px 32px; }
+      .section { padding: 24px; }
+    }
+    /* Tablet: stack the 2-col material grid, keep hero/project/approvals at 2 cols */
+    @media (max-width: 900px) {
+      .hero-grid       { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .project-grid    { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .material-grid   { grid-template-columns: 1fr; }
+      .approvals-grid  { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      h1 { font-size: clamp(36px, 6vw, 54px); }
+      .hero p { font-size: 18px; }
+    }
+    /* Phone: single column for everything */
+    @media (max-width: 640px) {
+      .hero { padding: 32px 22px; }
+      .hero::before { left: 32px; top: 48px; height: 96px; }
+      .hero-copy { padding-left: 20px; }
       .hero-grid,
       .project-grid,
-      .material-grid,
       .approvals-grid {
         grid-template-columns: 1fr;
       }
-
-      .hero,
-      .content {
-        padding-left: 22px;
-        padding-right: 22px;
-      }
-
-      .page { margin: 12px; }
+      .content { padding: 22px 18px 28px; }
+      .section { padding: 20px; border-radius: var(--radius-lg); }
+      .section-title { font-size: 20px; margin-bottom: 14px; }
+      .material-card h3 { font-size: 24px; }
+      .page { margin: 8px; border-radius: var(--radius-lg); }
+      .footer-note { flex-direction: column; align-items: flex-start; }
     }
 
     @media print {
@@ -519,9 +566,11 @@
         <div class="gallery-grid">
           <div class="gallery-item">
             <figure>
-              <img src="https://www.sergeferrari.com/app/uploads/Soltis-502-Proof-shade-sail-3-1920x1536.jpg"
-                   alt="Orange tensioned Soltis 502 Proof shade sail on a modern terrace"
-                   loading="lazy">
+              <div class="img-wrap">
+                <img src="https://www.sergeferrari.com/app/uploads/Soltis-502-Proof-shade-sail-3-1920x1536.jpg"
+                     alt="Orange tensioned Soltis 502 Proof shade sail on a modern terrace"
+                     loading="lazy">
+              </div>
               <figcaption>
                 <strong>Tensioned shade sail</strong>
                 Soltis 502 Proof application — courtesy Serge Ferrari.
@@ -530,9 +579,11 @@
           </div>
           <div class="gallery-item">
             <figure>
-              <img src="https://www.sergeferrari.com/app/uploads/Lodge-by-Autonomous-Tent-Co.-at-Treebones-Resort-3-1-1920x1264.jpg"
-                   alt="Waterfront lodge with stretched Soltis fabric roof"
-                   loading="lazy">
+              <div class="img-wrap">
+                <img src="https://www.sergeferrari.com/app/uploads/Lodge-by-Autonomous-Tent-Co.-at-Treebones-Resort-3-1-1920x1264.jpg"
+                     alt="Waterfront lodge with stretched Soltis fabric roof"
+                     loading="lazy">
+              </div>
               <figcaption>
                 <strong>Lodge canopy</strong>
                 Autonomous Tent Co. — Treebones Resort — courtesy Serge Ferrari.
@@ -541,9 +592,11 @@
           </div>
           <div class="gallery-item">
             <figure>
-              <img src="https://www.sergeferrari.com/app/uploads/Festival-international-des-jardins-Chaumont-sur-Loire-4-1920x1440.jpg"
-                   alt="Red flower-shaped Soltis shade structures at Festival international des jardins, Chaumont-sur-Loire"
-                   loading="lazy">
+              <div class="img-wrap">
+                <img src="https://www.sergeferrari.com/app/uploads/Festival-international-des-jardins-Chaumont-sur-Loire-4-1920x1440.jpg"
+                     alt="Red flower-shaped Soltis shade structures at Festival international des jardins, Chaumont-sur-Loire"
+                     loading="lazy">
+              </div>
               <figcaption>
                 <strong>Festival des jardins, Chaumont-sur-Loire</strong>
                 Fabric shade structures — courtesy Serge Ferrari.

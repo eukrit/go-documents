@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.2] - 2026-04-19
+
+### Fixed
+- `docs/materials/soltis-502-proof.html`: gallery card captions no longer clipped — image now lives in an `.img-wrap` with fixed 4:3 aspect-ratio while the caption flows below naturally (card height is content-driven, no more `overflow: hidden` truncation on the outer card).
+
+### Changed
+- Responsive breakpoints tuned for tablets/phones:
+  - Palette: 6 → 5 (≤1040px) → 4 (≤900px) → 3 (≤640px) → 2 (≤480px) columns
+  - Gallery: 3 → 2 (≤900px) → 1 (≤480px) columns
+  - Hero / project / approvals grids stay 2-col on tablets (collapse to 1-col at ≤640px instead of 980px)
+  - Material grid stacks at ≤900px
+  - Tighter padding, smaller hero title, stacked footer on phones
+
 ## [1.2.1] - 2026-04-19
 
 ### Changed
