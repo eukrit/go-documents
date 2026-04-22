@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = (
     r"C:\Users\eukri\OneDrive\Documents\Claude Code"
-    r"\Credentials Claude Code\ai-agents-go-4c81b70995db.json"
+    r"\Credentials Claude Code\ai-agents-go-9b4219be8c01.json"
 )
 
 from google.cloud import firestore

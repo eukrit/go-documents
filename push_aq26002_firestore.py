@@ -7,7 +7,7 @@ from datetime import datetime, timedelta, timezone
 # Point to GCP service account
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = (
     r"C:\Users\eukri\OneDrive\Documents\Claude Code"
-    r"\Credentials Claude Code\ai-agents-go-4c81b70995db.json"
+    r"\Credentials Claude Code\ai-agents-go-9b4219be8c01.json"
 )
 os.environ["GOOGLE_CLOUD_PROJECT"] = "ai-agents-go"
 

@@ -21,7 +21,7 @@ CREDS_PATH = os.path.join(
     os.path.expanduser("~"),
     "OneDrive", "Documents", "Claude Code",
     "Credentials Claude Code",
-    "ai-agents-go-4c81b70995db.json",
+    "ai-agents-go-9b4219be8c01.json",
 )
 if os.path.exists(CREDS_PATH):
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CREDS_PATH
