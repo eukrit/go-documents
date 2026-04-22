@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2026-04-22
+
+### Added — project email-loop lookup
+- `src/project_email_loops.py` — reads `go_project_email_loops` collection
+  from the `go-sales-orders` Firestore database at document-submission time.
+  Exposes `get_loop(so_ref)` (full doc) and `get_recipients(so_ref, *,
+  internal_only, external_only, min_confidence)` (flat to/cc/bcc email lists)
+  with `min_confidence` defaulting to `MEDIUM` so LOW-confidence Gmail
+  backfill rows are excluded from real sends.
+- Collection schema and population scripts live in the `go-sales-orders`
+  project: `create_email_loops_collection.py` (manual) and
+  `backfill_email_loops.py` (Gmail-driven).
+
 ## [1.0.0] - 2026-04-08
 
 ### Added
