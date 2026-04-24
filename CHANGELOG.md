@@ -2,6 +2,58 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-04-24
+
+### Added — material + drawing submission workflow
+- **Templates:** `drawing-submission-template.html` (clone of material template
+  with drawing-specific fields: Discipline, Issue Purpose, Drawn By, Checked By;
+  Drawing List table with Drawing No / Title / Rev / Scale / Sheet Size;
+  attachments list for PDFs / CAD / model / calcs).
+- **Firestore:** new `submissions` collection (database `go-documents`). Doc id
+  scheme `MS-<SO>-NNN` / `DS-<SO>-NNN`. See `src/firestore_submissions.py` for
+  models, id generation, CRUD, and `list_so_refs()` dashboard aggregation.
+- **App endpoints (`src/app.py`):**
+  - `POST /api/submissions` — create a material or drawing submission
+  - `POST /api/submissions/<id>/attachments` — upload file → GCS
+    `go-documents-files/submissions/<id>/attachments/<filename>`
+  - `POST /api/submissions/<id>/send` — render PDF, fetch recipients via
+    `project_email_loops.get_recipients(soRef)`, send via Gmail as
+    `eukrit@goco.bz` (DWD), apply Submissions label, publish Pub/Sub event
+  - `PATCH /api/submissions/<id>/status` — update approval status
+  - `GET /submissions/<id>` — view filled HTML · `/submissions/<id>/pdf` — PDF
+  - `GET /dashboard` — master project directory (all SO refs with counts)
+  - `GET /projects/<soRef>` — per-project submission dashboard
+  - `POST /pubsub/push` — Pub/Sub push receiver → Slack fan-out
+- **Gmail:** `src/gmail_sender.py` — DWD-impersonated send as `eukrit@goco.bz`,
+  applies `Submissions/Materials` or `Submissions/Drawings` label on the sent
+  message via `messages.modify` (filters can't reliably match outgoing).
+- **PDF render:** `src/submission_render.py` — WeasyPrint-based server-side PDF
+  render from the HTML templates (no headless Chromium).
+- **Events:** `src/submission_events.py` publishes to Pub/Sub topic
+  `submission-events` on created/sent/status_changed. `src/slack_notifier.py`
+  posts to `#submission-materials` / `#submission-drawings` with an Open button
+  linking back to `/submissions/<id>`.
+- **Setup scripts:**
+  - `scripts/setup_gmail_labels.py` — create `Submissions/Materials` and
+    `Submissions/Drawings` labels on eukrit@goco.bz
+  - `scripts/setup_pubsub.sh` — create topic + push subscription to Cloud Run
+    `/pubsub/push`, wire SA as invoker
+  - `scripts/setup_slack_channels.py` — create `#submission-materials` and
+    `#submission-drawings` public channels
+- **Deploy:** Dockerfile bumped to install Pango/HarfBuzz/libjpeg for
+  WeasyPrint; Cloud Run memory raised to 1Gi, env vars `GCP_PROJECT`,
+  `SUBMISSION_SENDER`, `SUBMISSION_EVENTS_TOPIC` set.
+
+### Changed
+- `src/app.py` — root `/` now redirects to `/dashboard`; submission viewer
+  prefers new `submissions` collection, falls back to legacy `document-records`.
+
+### Prerequisites (must be done once by owner)
+- Grant DWD on `claude@ai-agents-go` SA for scopes `gmail.send`,
+  `gmail.modify`, `gmail.labels` (Workspace admin console).
+- `scripts/setup_pubsub.sh` must run after first Cloud Run deploy so the push
+  URL resolves.
+
 ## [1.1.0] - 2026-04-22
 
 ### Added — project email-loop lookup

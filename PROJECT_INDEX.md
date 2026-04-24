@@ -1,9 +1,23 @@
 # go-documents — Project Index
-_Last updated: 2026-04-22_
+_Last updated: 2026-04-24_
 
 > Single-page project reference. Claude reads this + `.claude/PROGRESS.md` at session start. Update when structure changes.
 
 ## Status
+- **Version:** 1.2.0 · **Last build:** 2026-04-24 · **Status:** pending deploy · **Commit:** (pending)
+
+## Submissions Workflow (v1.2)
+- **Types:** `material` (MS-<SO>-NNN), `drawing` (DS-<SO>-NNN)
+- **Collection:** `submissions` (database `go-documents`)
+- **Attachments:** GCS `go-documents-files/submissions/<id>/attachments/`
+- **Rendered PDF:** GCS `go-documents-files/submissions/<id>/<id>.pdf`
+- **Sender:** `eukrit@goco.bz` via DWD on `claude@ai-agents-go` SA
+- **Recipients:** resolved via `project_email_loops.get_recipients(soRef)` → `go-sales-orders.go_project_email_loops` collection
+- **Labels:** `Submissions/Materials`, `Submissions/Drawings` applied to sent message
+- **Pub/Sub topic:** `submission-events` → push sub `submission-events-slack` → `POST /pubsub/push` → Slack `#submission-materials` / `#submission-drawings`
+- **Dashboards:** `/dashboard` (master) · `/projects/<soRef>` (per-project)
+
+## Status (original)
 - **Version:** [0.1.0] · **Last build:** 2026-04-22 · **Status:** [deployed|failed|pending] · **Commit:** [sha]
 - **Branch:** [main|master]
 - **GitHub Repo:** https://github.com/eukrit/go-documents

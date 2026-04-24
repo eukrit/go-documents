@@ -1,18 +1,39 @@
-"""GO Documents — Document serving app.
+"""GO Documents — Document + Submission service.
 
-Serves generated documents at:
-  https://docs.aredaatelier.com/<type>/<doc_id>  (Areda-branded documents)
-  https://docs.leka.studio/<type>/<doc_id>       (all other documents)
-
-Document types: quotations, submissions, datasheets, certificates, sales-sheets
-
-All pages are noindex/nofollow — not intended for public search.
+Serves:
+  - Document viewer (quotations, submissions, etc.) at docs.leka.studio / docs.aredaatelier.com
+  - Submission creation, attachment upload, PDF render, email send
+  - Master project dashboard at /dashboard
+  - Per-project dashboard at /projects/<soRef>
+  - Pub/Sub push receiver at /pubsub/push -> Slack + dashboard update
 """
 
+import base64
+import json
+import logging
 import os
+from datetime import datetime, timezone
 
-from flask import Flask, Response, abort, redirect, render_template_string, request
+from flask import (
+    Flask, Response, abort, jsonify, redirect,
+    render_template_string, request,
+)
 from google.cloud import firestore, storage
+
+from firestore_submissions import (
+    COLLECTION as SUB_COLLECTION,
+    GCS_BUCKET as SUB_BUCKET,
+    add_attachment, create_submission, get_submission,
+    list_so_refs, list_submissions, mark_sent, update_status,
+)
+from gmail_sender import send_submission_email
+from project_email_loops import get_recipients
+from slack_notifier import notify as slack_notify
+from submission_events import publish_event
+from submission_render import render_html, render_pdf
+
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger("go-documents")
 
 app = Flask(__name__)
 
@@ -28,10 +49,7 @@ VALID_TYPES = {
     "sales-sheets": "sales-sheet",
 }
 
-# Brand routing: template_id prefix -> canonical domain
-BRAND_DOMAINS = {
-    "areda": "docs.aredaatelier.com",
-}
+BRAND_DOMAINS = {"areda": "docs.aredaatelier.com"}
 DEFAULT_DOMAIN = "docs.leka.studio"
 
 NOINDEX_HEADERS = {
@@ -46,22 +64,26 @@ def get_db():
     return get_db._client
 
 
-# ---------- robots.txt ----------
+def _gcs():
+    if not hasattr(_gcs, "_client"):
+        _gcs._client = storage.Client()
+    return _gcs._client
+
+
+def _dashboard_base() -> str:
+    return os.environ.get("DASHBOARD_BASE_URL", f"https://{request.host}")
+
+
+# ---------- robots / health ----------
 
 @app.route("/robots.txt")
 def robots():
-    return Response(
-        "User-agent: *\nDisallow: /\n",
-        mimetype="text/plain",
-        headers=NOINDEX_HEADERS,
-    )
+    return Response("User-agent: *\nDisallow: /\n", mimetype="text/plain", headers=NOINDEX_HEADERS)
 
-
-# ---------- Health check ----------
 
 @app.route("/")
 def index():
-    return Response("GO Documents", headers=NOINDEX_HEADERS)
+    return redirect("/dashboard", code=302)
 
 
 @app.route("/healthz")
@@ -69,187 +91,456 @@ def healthz():
     return "ok"
 
 
-# ---------- Document list by type ----------
+# ========================================================================
+# SUBMISSIONS — creation, upload, send, view
+# ========================================================================
+
+@app.route("/api/submissions", methods=["POST"])
+def api_create_submission():
+    body = request.get_json(silent=True) or {}
+    kind = body.get("type")
+    if kind not in ("material", "drawing"):
+        return jsonify({"error": "type must be 'material' or 'drawing'"}), 400
+    so_ref = body.get("soRef")
+    if not so_ref:
+        return jsonify({"error": "soRef required"}), 400
+
+    sub = create_submission(
+        kind=kind,
+        so_ref=so_ref,
+        project_name=body.get("projectName", ""),
+        client=body.get("client", ""),
+        consultant=body.get("consultant", ""),
+        site_location=body.get("siteLocation", ""),
+        revision=body.get("revision", "00"),
+        submission_type=body.get("submissionType", "Initial"),
+        items=body.get("items", []),
+        notes=body.get("notes", ""),
+        discipline=body.get("discipline", ""),
+        issue_purpose=body.get("issuePurpose", ""),
+        drawn_by=body.get("drawnBy", ""),
+        checked_by=body.get("checkedBy", ""),
+    )
+    try:
+        publish_event(event="created", submission=sub)
+    except Exception as e:  # never block creation on pubsub
+        log.warning("publish_event failed: %s", type(e).__name__)
+    return jsonify({"submissionId": sub["submissionId"], "status": sub["status"]}), 201
+
+
+@app.route("/api/submissions/<sid>/attachments", methods=["POST"])
+def api_upload_attachment(sid):
+    sub = get_submission(sid)
+    if not sub:
+        return jsonify({"error": "not found"}), 404
+    if "file" not in request.files:
+        return jsonify({"error": "file form-field required"}), 400
+    f = request.files["file"]
+    if not f.filename:
+        return jsonify({"error": "empty filename"}), 400
+
+    # Upload to GCS: submissions/<sid>/attachments/<filename>
+    gcs_path = f"submissions/{sid}/attachments/{f.filename}"
+    bucket = _gcs().bucket(SUB_BUCKET)
+    blob = bucket.blob(gcs_path)
+    data = f.read()
+    blob.upload_from_string(data, content_type=f.mimetype or "application/octet-stream")
+
+    att = {
+        "filename": f.filename,
+        "gcsPath": gcs_path,
+        "size": len(data),
+        "contentType": f.mimetype or "application/octet-stream",
+        "uploadedAt": datetime.now(timezone.utc),
+    }
+    add_attachment(sid, att)
+    return jsonify({"ok": True, "attachment": {**att, "uploadedAt": att["uploadedAt"].isoformat()}}), 201
+
+
+@app.route("/api/submissions/<sid>/send", methods=["POST"])
+def api_send_submission(sid):
+    sub = get_submission(sid)
+    if not sub:
+        return jsonify({"error": "not found"}), 404
+
+    loop = get_recipients(sub["soRef"])
+    if not loop or not loop.get("to"):
+        return jsonify({"error": f"no email loop for SO {sub['soRef']}"}), 424
+
+    # Render PDF
+    pdf_bytes = render_pdf(sub)
+    pdf_filename = f"{sub['submissionId']}.pdf"
+
+    # Upload PDF to GCS
+    pdf_gcs = f"submissions/{sid}/{pdf_filename}"
+    _gcs().bucket(SUB_BUCKET).blob(pdf_gcs).upload_from_string(
+        pdf_bytes, content_type="application/pdf",
+    )
+
+    # Fetch attachments from GCS
+    atts = []
+    for a in sub.get("attachments", []):
+        blob = _gcs().bucket(SUB_BUCKET).blob(a["gcsPath"])
+        atts.append((a["filename"], blob.download_as_bytes(), a.get("contentType", "application/octet-stream")))
+
+    # Override recipients from request body if provided
+    body = request.get_json(silent=True) or {}
+    msg_id = send_submission_email(
+        submission=sub,
+        pdf_bytes=pdf_bytes,
+        pdf_filename=pdf_filename,
+        attachments=atts,
+        to=body.get("to") or loop["to"],
+        cc=body.get("cc") or loop.get("cc", []),
+        bcc=body.get("bcc") or loop.get("bcc", []),
+        subject=body.get("subject"),
+        body_text=body.get("body"),
+    )
+
+    mark_sent(sid, pdf_gcs_path=pdf_gcs, message_id=msg_id)
+    sub = get_submission(sid)
+    try:
+        publish_event(event="sent", submission=sub, extra={"messageId": msg_id})
+    except Exception as e:
+        log.warning("publish_event failed: %s", type(e).__name__)
+    return jsonify({"ok": True, "messageId": msg_id, "pdfGcsPath": pdf_gcs})
+
+
+@app.route("/api/submissions/<sid>/status", methods=["PATCH"])
+def api_update_status(sid):
+    body = request.get_json(silent=True) or {}
+    status = body.get("status")
+    try:
+        update_status(sid, status, reviewerRemarks=body.get("reviewerRemarks", ""))
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    sub = get_submission(sid)
+    try:
+        publish_event(event="status_changed", submission=sub)
+    except Exception as e:
+        log.warning("publish_event failed: %s", type(e).__name__)
+    return jsonify({"ok": True})
+
+
+@app.route("/submissions/<sid>")
+def view_submission(sid):
+    """Serve the filled HTML for the submission."""
+    sub = get_submission(sid)
+    if not sub:
+        # Fall through to legacy document-records lookup
+        return _legacy_doc("submissions", sid)
+    html_text = render_html(sub)
+    return Response(html_text, content_type="text/html", headers=NOINDEX_HEADERS)
+
+
+@app.route("/submissions/<sid>/pdf")
+def view_submission_pdf(sid):
+    sub = get_submission(sid)
+    if not sub:
+        abort(404)
+    pdf_bytes = render_pdf(sub)
+    return Response(
+        pdf_bytes, content_type="application/pdf",
+        headers={**NOINDEX_HEADERS, "Content-Disposition": f'inline; filename="{sid}.pdf"'},
+    )
+
+
+# ========================================================================
+# DASHBOARDS
+# ========================================================================
+
+@app.route("/dashboard")
+def dashboard():
+    rows = list_so_refs()
+    return Response(
+        render_template_string(DASHBOARD_TEMPLATE, rows=rows),
+        headers=NOINDEX_HEADERS,
+    )
+
+
+@app.route("/projects/<so_ref>")
+def project_dashboard(so_ref):
+    subs = list_submissions(so_ref=so_ref)
+    materials = [s for s in subs if s["type"] == "material"]
+    drawings = [s for s in subs if s["type"] == "drawing"]
+    project_name = subs[0]["projectName"] if subs else so_ref
+    return Response(
+        render_template_string(
+            PROJECT_TEMPLATE,
+            so_ref=so_ref, project_name=project_name,
+            materials=materials, drawings=drawings,
+        ),
+        headers=NOINDEX_HEADERS,
+    )
+
+
+# ========================================================================
+# PUB/SUB PUSH RECEIVER
+# ========================================================================
+
+@app.route("/pubsub/push", methods=["POST"])
+def pubsub_push():
+    envelope = request.get_json(silent=True) or {}
+    msg = envelope.get("message", {})
+    data_b64 = msg.get("data", "")
+    try:
+        event = json.loads(base64.b64decode(data_b64).decode("utf-8")) if data_b64 else {}
+    except Exception:
+        return "bad message", 400
+    try:
+        slack_notify(event, dashboard_base_url=_dashboard_base())
+    except Exception as e:
+        log.error("slack notify failed: %s", e)
+        # Ack anyway — do not stack push retries on Slack transient failures
+    return "", 204
+
+
+# ========================================================================
+# LEGACY document-records viewer (quotations / datasheets / etc.)
+# ========================================================================
+
+def _legacy_doc(doc_type_path, doc_id):
+    doc_type = VALID_TYPES.get(doc_type_path)
+    if not doc_type:
+        abort(404)
+    db = get_db()
+    doc = db.collection(COLLECTION).document(doc_id).get()
+    if not doc.exists:
+        abort(404)
+    data = doc.to_dict()
+    if data.get("document_type") != doc_type:
+        abort(404)
+    redir = _maybe_redirect(data, doc_type_path, doc_id)
+    if redir:
+        return redir
+    gcs_html_path = data.get("generated_html_gcs")
+    if gcs_html_path:
+        try:
+            blob = _gcs().bucket(GCS_BUCKET).blob(gcs_html_path)
+            return Response(blob.download_as_text(), content_type="text/html", headers=NOINDEX_HEADERS)
+        except Exception:
+            pass
+    html_content = data.get("html_content")
+    if html_content:
+        return Response(html_content, content_type="text/html", headers=NOINDEX_HEADERS)
+    return Response(
+        render_template_string(
+            DOC_FALLBACK_TEMPLATE,
+            code=data.get("quotation_code", doc_id),
+            lang=data.get("language", "en"),
+            subject=data.get("subject", ""),
+            status=data.get("status", "draft"),
+            grand_total=f"{data.get('grand_total', 0):,.2f}",
+            currency=data.get("currency", "THB"),
+            doc_type=doc_type_path, doc_id=doc_id,
+        ),
+        content_type="text/html", headers=NOINDEX_HEADERS,
+    )
+
+
+def _get_canonical_domain(template_id: str) -> str:
+    for prefix, domain in BRAND_DOMAINS.items():
+        if template_id.startswith(prefix):
+            return domain
+    return DEFAULT_DOMAIN
+
+
+def _maybe_redirect(data, doc_type_path, doc_id):
+    canonical = _get_canonical_domain(data.get("template_id", ""))
+    if request.host.split(":")[0] != canonical:
+        return redirect(f"https://{canonical}/{doc_type_path}/{doc_id}", code=301)
+    return None
+
 
 @app.route("/<doc_type_path>")
 def list_documents(doc_type_path):
     doc_type = VALID_TYPES.get(doc_type_path)
     if not doc_type:
         abort(404)
-
+    if doc_type_path == "submissions":
+        # Prefer new submissions collection
+        items = []
+        for s in list_submissions(limit=200):
+            items.append({
+                "id": s["submissionId"], "code": s["submissionId"],
+                "subject": f"{s.get('projectName', '')} ({s.get('soRef', '')})",
+                "language": s["type"],
+                "status": s.get("status", "draft"),
+                "date": s.get("date", ""),
+                "url": f"/submissions/{s['submissionId']}",
+            })
+        return Response(
+            render_template_string(LIST_TEMPLATE, doc_type=doc_type_path, items=items),
+            headers=NOINDEX_HEADERS,
+        )
     db = get_db()
     docs = (
         db.collection(COLLECTION)
         .where("document_type", "==", doc_type)
         .order_by("created_at", direction=firestore.Query.DESCENDING)
-        .limit(100)
-        .stream()
+        .limit(100).stream()
     )
-
     items = []
     for doc in docs:
         d = doc.to_dict()
         items.append({
-            "id": doc.id,
-            "code": d.get("quotation_code", doc.id),
+            "id": doc.id, "code": d.get("quotation_code", doc.id),
             "subject": d.get("subject", ""),
             "language": d.get("language", ""),
             "status": d.get("status", ""),
             "date": str(d.get("document_date", ""))[:10],
             "url": f"/{doc_type_path}/{doc.id}",
         })
+    return Response(
+        render_template_string(LIST_TEMPLATE, doc_type=doc_type_path, items=items),
+        headers=NOINDEX_HEADERS,
+    )
 
-    html = render_template_string(LIST_TEMPLATE, doc_type=doc_type_path, items=items)
-    return Response(html, headers=NOINDEX_HEADERS)
-
-
-# ---------- Redirect helper ----------
-
-def _get_canonical_domain(template_id: str) -> str:
-    """Return the canonical domain for a template."""
-    for brand_prefix, brand_domain in BRAND_DOMAINS.items():
-        if template_id.startswith(brand_prefix):
-            return brand_domain
-    return DEFAULT_DOMAIN
-
-
-def _maybe_redirect(data: dict, doc_type_path: str, doc_id: str):
-    """301 redirect if the request is on the wrong domain for this document."""
-    template_id = data.get("template_id", "")
-    canonical = _get_canonical_domain(template_id)
-    current_host = request.host.split(":")[0]
-    if current_host != canonical:
-        return redirect(
-            f"https://{canonical}/{doc_type_path}/{doc_id}", code=301
-        )
-    return None
-
-
-# ---------- Serve single document ----------
 
 @app.route("/<doc_type_path>/<doc_id>")
 def serve_document(doc_type_path, doc_id):
-    doc_type = VALID_TYPES.get(doc_type_path)
-    if not doc_type:
-        abort(404)
-
-    db = get_db()
-    doc_ref = db.collection(COLLECTION).document(doc_id)
-    doc = doc_ref.get()
-
-    if not doc.exists:
-        abort(404)
-
-    data = doc.to_dict()
-    if data.get("document_type") != doc_type:
-        abort(404)
-
-    # Redirect to canonical domain if needed
-    redir = _maybe_redirect(data, doc_type_path, doc_id)
-    if redir:
-        return redir
-
-    # Check for generated HTML in GCS
-    gcs_html_path = data.get("generated_html_gcs")
-    if gcs_html_path:
-        try:
-            client = storage.Client()
-            bucket = client.bucket(GCS_BUCKET)
-            blob = bucket.blob(gcs_html_path)
-            html = blob.download_as_text()
-            return Response(html, content_type="text/html", headers=NOINDEX_HEADERS)
-        except Exception:
-            pass
-
-    # Check for inline HTML content
-    html_content = data.get("html_content")
-    if html_content:
-        return Response(html_content, content_type="text/html", headers=NOINDEX_HEADERS)
-
-    # Fallback: render a metadata page
-    code = data.get("quotation_code", doc_id)
-    lang = data.get("language", "en")
-    subject = data.get("subject", "")
-    status = data.get("status", "draft")
-    grand_total = data.get("grand_total", 0)
-    currency = data.get("currency", "THB")
-
-    html = render_template_string(
-        DOC_FALLBACK_TEMPLATE,
-        code=code,
-        lang=lang,
-        subject=subject,
-        status=status,
-        grand_total=f"{grand_total:,.2f}",
-        currency=currency,
-        doc_type=doc_type_path,
-        doc_id=doc_id,
-    )
-    return Response(html, content_type="text/html", headers=NOINDEX_HEADERS)
+    if doc_type_path == "submissions":
+        return view_submission(doc_id)
+    return _legacy_doc(doc_type_path, doc_id)
 
 
-# ---------- Templates ----------
+# ========================================================================
+# Templates
+# ========================================================================
 
-LIST_TEMPLATE = """<!DOCTYPE html>
-<html><head>
-<meta charset="UTF-8">
-<meta name="robots" content="noindex, nofollow">
-<title>GO Documents — {{ doc_type }}</title>
-<style>
-  body { font-family: 'Manrope', system-ui, sans-serif; margin: 40px; color: #252828; background: #F5F4F0; }
-  h1 { font-size: 24px; text-transform: capitalize; margin-bottom: 24px; }
-  table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-  th { background: #252828; color: #E1DFD4; text-align: left; padding: 10px 16px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; }
-  td { padding: 10px 16px; border-bottom: 1px solid #ECEAE4; font-size: 13px; }
-  a { color: #252828; text-decoration: none; font-weight: 600; }
-  a:hover { text-decoration: underline; }
-  .status { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
-  .status-draft { background: #FEF3C7; color: #92400E; }
-  .status-sent { background: #DBEAFE; color: #1E40AF; }
-  .status-accepted { background: #D1FAE5; color: #065F46; }
-  .empty { text-align: center; padding: 40px; color: #928A83; }
-</style>
+_BASE_CSS = """
+body { font-family: 'Manrope', system-ui, sans-serif; margin: 40px; color: #182557; background: #F5F4F0; }
+h1 { font-size: 24px; margin-bottom: 8px; }
+h2 { font-size: 16px; margin: 24px 0 10px; color: #8003FF; text-transform: uppercase; letter-spacing: 1px; }
+.sub { color: #928A83; font-size: 13px; margin-bottom: 24px; }
+table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 32px; }
+th { background: #182557; color: #FFF9E6; text-align: left; padding: 10px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; }
+td { padding: 10px 16px; border-bottom: 1px solid #ECEAE4; font-size: 13px; }
+a { color: #182557; text-decoration: none; font-weight: 600; }
+a:hover { text-decoration: underline; }
+.status { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.s-draft { background: #FEF3C7; color: #92400E; }
+.s-sent { background: #DBEAFE; color: #1E40AF; }
+.s-approved { background: #D1FAE5; color: #065F46; }
+.s-approved_as_noted { background: #D1FAE5; color: #065F46; }
+.s-revise_resubmit { background: #FEE2E2; color: #991B1B; }
+.s-rejected { background: #FEE2E2; color: #991B1B; }
+.badge { display:inline-block; padding: 2px 8px; background:#F3F4F6; color:#374151; border-radius:4px; font-size:11px; margin-right:4px; }
+.empty { text-align: center; padding: 40px; color: #928A83; }
+.crumb { color:#928A83; font-size:12px; margin-bottom:8px; }
+.crumb a { color:#8003FF; font-weight:600; }
+"""
+
+DASHBOARD_TEMPLATE = """<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="robots" content="noindex">
+<title>GO Documents — Project Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>""" + _BASE_CSS + """</style>
 </head><body>
-<h1>{{ doc_type }}</h1>
-{% if items %}
+<h1>Project Document Dashboard</h1>
+<div class="sub">All sales-order projects with active submissions · <a href="/submissions">all submissions</a></div>
+{% if rows %}
 <table>
-<thead><tr><th>Code</th><th>Subject</th><th>Lang</th><th>Date</th><th>Status</th></tr></thead>
+<thead><tr><th>SO Ref</th><th>Project</th><th>Materials</th><th>Drawings</th><th>Total</th><th>Last update</th><th></th></tr></thead>
 <tbody>
-{% for item in items %}
+{% for r in rows %}
 <tr>
-  <td><a href="{{ item.url }}">{{ item.code }}</a></td>
-  <td>{{ item.subject }}</td>
-  <td>{{ item.language|upper }}</td>
-  <td>{{ item.date }}</td>
-  <td><span class="status status-{{ item.status }}">{{ item.status }}</span></td>
+  <td><a href="/projects/{{ r.soRef }}">{{ r.soRef }}</a></td>
+  <td>{{ r.projectName }}</td>
+  <td>{{ r.material }}</td>
+  <td>{{ r.drawing }}</td>
+  <td><b>{{ r.total }}</b></td>
+  <td>{{ (r.lastUpdate.isoformat() if r.lastUpdate else "")[:19] }}</td>
+  <td><a href="/projects/{{ r.soRef }}">Open →</a></td>
 </tr>
 {% endfor %}
-</tbody>
-</table>
+</tbody></table>
 {% else %}
-<div class="empty">No {{ doc_type }} found.</div>
+<div class="empty">No projects with submissions yet.</div>
 {% endif %}
 </body></html>"""
 
-DOC_FALLBACK_TEMPLATE = """<!DOCTYPE html>
-<html><head>
-<meta charset="UTF-8">
-<meta name="robots" content="noindex, nofollow">
-<title>{{ code }} — GO Documents</title>
-<style>
-  body { font-family: 'Manrope', system-ui, sans-serif; margin: 60px auto; max-width: 600px; color: #252828; }
-  .card { background: white; padding: 32px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-  h1 { font-size: 22px; margin-bottom: 8px; }
-  .subject { color: #928A83; font-size: 14px; margin-bottom: 24px; }
-  .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #ECEAE4; font-size: 13px; }
-  .label { color: #928A83; }
-  .value { font-weight: 600; }
-  .note { margin-top: 24px; font-size: 12px; color: #928A83; text-align: center; }
-</style>
+PROJECT_TEMPLATE = """<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="robots" content="noindex">
+<title>{{ so_ref }} — Submissions</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>""" + _BASE_CSS + """</style>
 </head><body>
+<div class="crumb"><a href="/dashboard">← Dashboard</a></div>
+<h1>{{ project_name }}</h1>
+<div class="sub"><span class="badge">{{ so_ref }}</span> {{ materials|length }} material · {{ drawings|length }} drawing</div>
+
+<h2>Material Submissions</h2>
+{% if materials %}
+<table>
+<thead><tr><th>ID</th><th>Rev</th><th>Items</th><th>Date</th><th>Status</th><th></th></tr></thead>
+<tbody>
+{% for s in materials %}
+<tr>
+  <td><a href="/submissions/{{ s.submissionId }}">{{ s.submissionId }}</a></td>
+  <td>{{ s.revision }}</td>
+  <td>{{ s['items']|length }}</td>
+  <td>{{ s.date }}</td>
+  <td><span class="status s-{{ s.status }}">{{ s.status }}</span></td>
+  <td><a href="/submissions/{{ s.submissionId }}/pdf">PDF</a></td>
+</tr>
+{% endfor %}
+</tbody></table>
+{% else %}<div class="empty">No material submissions.</div>{% endif %}
+
+<h2>Drawing Submissions</h2>
+{% if drawings %}
+<table>
+<thead><tr><th>ID</th><th>Rev</th><th>Discipline</th><th>Purpose</th><th>Sheets</th><th>Date</th><th>Status</th><th></th></tr></thead>
+<tbody>
+{% for s in drawings %}
+<tr>
+  <td><a href="/submissions/{{ s.submissionId }}">{{ s.submissionId }}</a></td>
+  <td>{{ s.revision }}</td>
+  <td>{{ s.discipline }}</td>
+  <td>{{ s.issuePurpose }}</td>
+  <td>{{ s['items']|length }}</td>
+  <td>{{ s.date }}</td>
+  <td><span class="status s-{{ s.status }}">{{ s.status }}</span></td>
+  <td><a href="/submissions/{{ s.submissionId }}/pdf">PDF</a></td>
+</tr>
+{% endfor %}
+</tbody></table>
+{% else %}<div class="empty">No drawing submissions.</div>{% endif %}
+</body></html>"""
+
+LIST_TEMPLATE = """<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="robots" content="noindex">
+<title>GO Documents — {{ doc_type }}</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>""" + _BASE_CSS + """</style>
+</head><body>
+<div class="crumb"><a href="/dashboard">← Dashboard</a></div>
+<h1>{{ doc_type|capitalize }}</h1>
+{% if items %}
+<table><thead><tr><th>Code</th><th>Subject</th><th>Type</th><th>Date</th><th>Status</th></tr></thead><tbody>
+{% for item in items %}
+<tr><td><a href="{{ item.url }}">{{ item.code }}</a></td><td>{{ item.subject }}</td>
+<td>{{ item.language|upper }}</td><td>{{ item.date }}</td>
+<td><span class="status s-{{ item.status }}">{{ item.status }}</span></td></tr>
+{% endfor %}
+</tbody></table>
+{% else %}<div class="empty">No {{ doc_type }} found.</div>{% endif %}
+</body></html>"""
+
+DOC_FALLBACK_TEMPLATE = """<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="robots" content="noindex">
+<title>{{ code }} — GO Documents</title>
+<style>""" + _BASE_CSS + """
+.card { background: white; padding: 32px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); max-width:600px; margin:60px auto;}
+.row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #ECEAE4; font-size: 13px; }
+.label { color: #928A83; }
+.value { font-weight: 600; }
+.note { margin-top: 24px; font-size: 12px; color: #928A83; text-align: center; }
+</style></head><body>
 <div class="card">
   <h1>{{ code }}</h1>
-  <div class="subject">{{ subject }}</div>
+  <div class="sub">{{ subject }}</div>
   <div class="row"><span class="label">Language</span><span class="value">{{ lang|upper }}</span></div>
   <div class="row"><span class="label">Status</span><span class="value">{{ status }}</span></div>
   <div class="row"><span class="label">Total</span><span class="value">{{ currency }} {{ grand_total }}</span></div>
