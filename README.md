@@ -11,9 +11,9 @@ go-documents/
     firestore_quotations.py          # CRUD + running number for quotations
     firestore_inspection_models.py   # Pydantic models for inspection certificates
     firestore_inspections.py         # CRUD + running number for inspections
-  quotation-template.html            # EN quotation HTML template (Areda design system)
-  quotation-template-th.html         # TH quotation HTML template
-  playground-inspection-template.html # Playground inspection cert (Leka design system, Rev R1)
+  docs/reports/quotation-template.html            # EN quotation HTML template (Areda design system)
+  docs/reports/quotation-template-th.html         # TH quotation HTML template
+  docs/reports/playground-inspection-template.html # Playground inspection cert (Leka design system, Rev R1)
   AQ-*-*.html                        # Generated quotation files (EN + TH)
   freight_calculator.py              # China-Thai landed cost calculator
   agents/china-thai/                 # Freight calculation agent (Gift Somlak rates)

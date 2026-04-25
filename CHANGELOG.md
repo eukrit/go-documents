@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [1.2.0] - 2026-04-24
 
 ### Added — material + drawing submission workflow
-- **Templates:** `drawing-submission-template.html` (clone of material template
+- **Templates:** `docs/reports/drawing-submission-template.html` (clone of material template
   with drawing-specific fields: Discipline, Issue Purpose, Drawn By, Checked By;
   Drawing List table with Drawing No / Title / Rev / Scale / Sheet Size;
   attachments list for PDFs / CAD / model / calcs).
