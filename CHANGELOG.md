@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.2] - 2026-04-26
+
+### Changed — Drive folder ID + Slack signing secret auto-load
+
+- `src/drive_upload.py` — switched from name-resolution ("GO Submissions"
+  Shared Drive lookup) to a hardcoded Drive folder ID with env override.
+  Default points at the **"Submissions GO"** folder Eukrit pre-created
+  (`1gAhGAI94Z96aFUm3nCp66QO573ixm-Vh`). Override via
+  `SUBMISSIONS_DRIVE_FOLDER_ID` env. Works for both Shared Drive subfolders
+  and My Drive folders via `corpora=allDrives` + `supportsAllDrives=True`.
+- `src/app.py` — `_verify_slack_signature` now falls back to Secret Manager
+  (`slack-signing-secret` in `ai-agents-go`) when `SLACK_SIGNING_SECRET` env
+  is unset. Same pattern as `slack_notifier._get_token()` for the bot token.
+  Cached in-process. Override secret name via `SLACK_SIGNING_SECRET_NAME`.
+
+### Operations checklist (replaces v1.3.1 manual env-var step)
+- ~~Set `SLACK_SIGNING_SECRET` env on go-documents Cloud Run~~ — no longer
+  required; auto-loaded from `slack-signing-secret` GSM secret. Verify the
+  go-documents runtime SA has `roles/secretmanager.secretAccessor` on it.
+- DWD scope `drive.file` still required for `claude@ai-agents-go`.
+- `eukrit@goco.bz` (the impersonated user) needs Editor access on the
+  "Submissions GO" folder. Since Eukrit created it, this is already the case.
+
 ## [1.3.1] - 2026-04-26
 
 ### Changed — Slack Router wiring corrected

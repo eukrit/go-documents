@@ -324,12 +324,39 @@ def pubsub_push():
 # SLACK INTERACTIVITY (forwarded from slack-router service)
 # ========================================================================
 
+_slack_signing_secret_cache = {"v": ""}
+
+
+def _slack_signing_secret() -> str:
+    if _slack_signing_secret_cache["v"]:
+        return _slack_signing_secret_cache["v"]
+    val = os.environ.get("SLACK_SIGNING_SECRET", "")
+    if not val:
+        try:
+            from google.cloud import secretmanager
+            sm = secretmanager.SecretManagerServiceClient()
+            project = os.environ.get("GCP_PROJECT", "ai-agents-go")
+            name = (
+                f"projects/{project}/secrets/"
+                f"{os.environ.get('SLACK_SIGNING_SECRET_NAME', 'slack-signing-secret')}"
+                "/versions/latest"
+            )
+            val = sm.access_secret_version(
+                request={"name": name},
+            ).payload.data.decode("utf-8").strip()
+        except Exception as e:
+            log.error("failed to load slack-signing-secret: %s", type(e).__name__)
+            return ""
+    _slack_signing_secret_cache["v"] = val
+    return val
+
+
 # Lazy import keeps cold-start small for non-Slack paths.
 def _verify_slack_signature(raw_body: bytes, ts: str, sig: str) -> bool:
     import hashlib
     import hmac
     import time
-    secret = os.environ.get("SLACK_SIGNING_SECRET", "")
+    secret = _slack_signing_secret()
     if not secret or not ts or not sig:
         return False
     try:
