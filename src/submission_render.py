@@ -12,10 +12,13 @@ import html
 import os
 from pathlib import Path
 
+from submission_clause import acceptance_clause_html
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+_TEMPLATES_DIR = BASE_DIR / "docs" / "reports"
 TEMPLATES = {
-    "material": BASE_DIR / "material-submission-template.html",
-    "drawing": BASE_DIR / "drawing-submission-template.html",
+    "material": _TEMPLATES_DIR / "material-submission-template.html",
+    "drawing": _TEMPLATES_DIR / "drawing-submission-template.html",
 }
 
 
@@ -149,6 +152,13 @@ def render_html(submission: dict) -> str:
                 _esc(notes),
                 1,
             )
+
+    # Acceptance clause (bilingual, single source of truth in submission_clause.py)
+    html_text = html_text.replace(
+        "<!-- ACCEPTANCE_CLAUSE -->",
+        acceptance_clause_html(submission),
+        1,
+    )
 
     # Reviewer remarks
     remarks = submission.get("reviewerRemarks", "").strip()

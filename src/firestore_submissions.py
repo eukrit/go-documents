@@ -200,10 +200,23 @@ def update_status(submission_id: str, status: str, **extra) -> None:
     _db().collection(COLLECTION).document(submission_id).update(patch)
 
 
-def mark_sent(submission_id: str, *, pdf_gcs_path: str, message_id: str) -> None:
+def mark_sent(
+    submission_id: str,
+    *,
+    pdf_gcs_path: str,
+    message_id: str,
+    drive_file_id: str | None = None,
+    drive_web_view_link: str | None = None,
+) -> None:
+    extras = {}
+    if drive_file_id:
+        extras["driveFileId"] = drive_file_id
+    if drive_web_view_link:
+        extras["driveWebViewLink"] = drive_web_view_link
     update_status(
         submission_id, "sent",
         pdfGcsPath=pdf_gcs_path,
         emailMessageId=message_id,
         emailSentAt=datetime.now(timezone.utc),
+        **extras,
     )

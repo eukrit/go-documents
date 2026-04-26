@@ -18,6 +18,8 @@ from email.mime.text import MIMEText
 import google.auth
 from googleapiclient.discovery import build
 
+from submission_clause import acceptance_clause_text
+
 SENDER = os.environ.get("SUBMISSION_SENDER", "eukrit@goco.bz")
 SCOPES = [
     "https://www.googleapis.com/auth/gmail.send",
@@ -77,8 +79,14 @@ def send_submission_email(
     bcc: list[str] | None = None,
     subject: str | None = None,
     body_text: str | None = None,
+    include_acceptance_clause: bool = True,
 ) -> str:
-    """Send submission email. Returns Gmail message id. Applies the Submissions label."""
+    """Send submission email. Returns Gmail message id. Applies the Submissions label.
+
+    The bilingual EN+TH "Acceptance & Response Period" clause is appended to
+    every email body unless `include_acceptance_clause=False`. Single source of
+    truth: `submission_clause.acceptance_clause_text()`.
+    """
     svc = _gmail_service()
     kind = submission["type"]
     sid = submission["submissionId"]
@@ -100,6 +108,10 @@ def send_submission_email(
             f"Best regards,\n"
             f"GO Corporation — Project Division\n"
         )
+
+    if include_acceptance_clause:
+        clause = acceptance_clause_text(submission)
+        body_text = f"{body_text.rstrip()}\n\n---\n\n{clause}\n"
 
     msg = MIMEMultipart()
     msg["From"] = SENDER

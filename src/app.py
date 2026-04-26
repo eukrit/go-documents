@@ -26,6 +26,7 @@ from firestore_submissions import (
     add_attachment, create_submission, get_submission,
     list_so_refs, list_submissions, mark_sent, update_status,
 )
+from drive_upload import upload_submission_pdf
 from gmail_sender import send_submission_email
 from project_email_loops import get_recipients
 from slack_notifier import notify as slack_notify
@@ -177,6 +178,14 @@ def api_send_submission(sid):
         pdf_bytes, content_type="application/pdf",
     )
 
+    # Mirror to Shared Drive so eukrit can manually click "Request signature"
+    # in Drive UI (Google Workspace native eSignature, no public API).
+    drive_meta = {}
+    try:
+        drive_meta = upload_submission_pdf(pdf_bytes, sub)
+    except Exception as e:
+        log.warning("drive upload failed: %s: %s", type(e).__name__, e)
+
     # Fetch attachments from GCS
     atts = []
     for a in sub.get("attachments", []):
@@ -197,13 +206,29 @@ def api_send_submission(sid):
         body_text=body.get("body"),
     )
 
-    mark_sent(sid, pdf_gcs_path=pdf_gcs, message_id=msg_id)
+    mark_sent(
+        sid,
+        pdf_gcs_path=pdf_gcs,
+        message_id=msg_id,
+        drive_file_id=drive_meta.get("fileId"),
+        drive_web_view_link=drive_meta.get("webViewLink"),
+    )
     sub = get_submission(sid)
     try:
-        publish_event(event="sent", submission=sub, extra={"messageId": msg_id})
+        publish_event(event="sent", submission=sub, extra={
+            "messageId": msg_id,
+            "driveWebViewLink": drive_meta.get("webViewLink", ""),
+            "customerName": sub.get("customerName") or sub.get("client", ""),
+        })
     except Exception as e:
         log.warning("publish_event failed: %s", type(e).__name__)
-    return jsonify({"ok": True, "messageId": msg_id, "pdfGcsPath": pdf_gcs})
+    return jsonify({
+        "ok": True,
+        "messageId": msg_id,
+        "pdfGcsPath": pdf_gcs,
+        "driveFileId": drive_meta.get("fileId"),
+        "driveWebViewLink": drive_meta.get("webViewLink"),
+    })
 
 
 @app.route("/api/submissions/<sid>/status", methods=["PATCH"])

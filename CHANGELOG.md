@@ -2,6 +2,52 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2026-04-26
+
+### Added — submission sign-off & Slack Router wiring
+
+- **Bilingual "Acceptance & Response Period" clause** (EN + TH) appended to every
+  submission PDF AND every submission email body. Default 7 working days,
+  configurable via `SUBMISSION_RESPONSE_DAYS` env var. If no written comments are
+  received in that window, the submission is deemed accepted in full.
+  Single source of truth: `src/submission_clause.py`.
+- **Templates:** new `<!-- ACCEPTANCE_CLAUSE -->` marker + `.limitations.acceptance`
+  styling in both `docs/reports/material-submission-template.html` and
+  `docs/reports/drawing-submission-template.html`.
+- **Email injection:** `gmail_sender.send_submission_email` now appends the clause
+  to default and override `body_text`. Opt-out via `include_acceptance_clause=False`.
+- **Google Drive eSignature workflow:** new `src/drive_upload.py` mirrors every
+  rendered PDF to Shared Drive `GO Submissions/Submissions/<soRef>/<sid>.pdf` via
+  DWD impersonation. `driveFileId` + `driveWebViewLink` persisted on the
+  submission record. PMs click "Request signature" in Drive UI for native
+  Workspace eSignature. (No public API yet — manual step.)
+- **Slack Router wiring (replaces hardcoded channel map):** `src/slack_notifier.py`
+  now resolves channels via the central `data-communications/route_event` HTTP
+  endpoint, fanning out to project SO channel, subcategory channel, customer
+  entity channel — all in one event. Fail-soft fallback to legacy
+  `#submission-materials` / `#submission-drawings` if router unreachable.
+  Auth: shared bearer token in Secret Manager (`data-comms-router-token`).
+  Caches resolution 5 min by `(type, soRef)`.
+
+### Changed
+- `src/submission_render.py` — `TEMPLATES` now reads from `docs/reports/`
+  (Rule 13 docs-only layout) instead of repo root.
+- `src/firestore_submissions.mark_sent()` — accepts `drive_file_id` /
+  `drive_web_view_link`.
+
+### Operations checklist (manual, post-deploy)
+- Create Shared Drive **"GO Submissions"** in Workspace; add
+  `claude@ai-agents-go.iam.gserviceaccount.com` as Content Manager.
+- Grant DWD scope `https://www.googleapis.com/auth/drive.file` to
+  `claude@ai-agents-go` in Workspace admin (existing scopes:
+  `gmail.send`, `gmail.modify`, `gmail.labels`).
+- Create Secret Manager secret `data-comms-router-token` with a random 32-byte
+  value; grant `roles/secretmanager.secretAccessor` to the data-communications
+  AND go-documents runtime SAs.
+- Deploy data-communications: `gcloud functions deploy route_event ...`.
+- Update go-documents Cloud Run service env: set `SLACK_ROUTER_URL` to the
+  deployed function URL.
+
 ## [1.2.0] - 2026-04-24
 
 ### Added — material + drawing submission workflow
