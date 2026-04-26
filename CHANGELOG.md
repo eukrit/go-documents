@@ -2,9 +2,41 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.1] - 2026-04-26
+
+### Changed — Slack Router wiring corrected
+
+The "Slack Router" in `data-communications/slack-router/` is the **incoming
+interactivity dispatcher**, not an outgoing channel-resolver. v1.3.0 wired
+`slack_notifier.py` to a non-existent `route_event` HTTP endpoint based on a
+misread of upstream. v1.3.1 corrects this:
+
+- `src/slack_notifier.py` restored to hardcoded channel posting (legacy
+  behaviour) but the card now carries **interactive Approve / Reject /
+  Comment buttons** with `submission_*` `action_id` prefixes.
+- New `/slack/interactivity` endpoint in `src/app.py` — receives button
+  clicks forwarded by the slack-router service, verifies Slack signature
+  via `SLACK_SIGNING_SECRET`, dispatches `submission_approve_*` /
+  `submission_reject_*` / `submission_comment_*` to update the submission
+  status and publish a `status_changed` Pub/Sub event (which fans out to
+  Slack again as a status-update card).
+- `data-communications/slack-router/routes.json` — new rule routing
+  `submission_*` action_id prefix to `https://docs.leka.studio/slack/interactivity`.
+- `data-communications/src/routing_engine.py` — added `submission_material` /
+  `submission_drawing` to `_FALLBACK_SUBCATEGORY_MAP` so organic email
+  classification (e.g. consultant replies referencing a submission) lands in
+  the right channel without Firestore config bootstrap.
+
+### Operations checklist (additions to v1.3.0)
+- Set `SLACK_SIGNING_SECRET` env on go-documents Cloud Run (same secret as
+  slack-router uses; from the GoCo Slack app config).
+- Redeploy `slack-router` Cloud Run service to pick up the new
+  `routes.json`. (Existing Slack app interactivity URL is already pointed
+  at slack-router — no Slack-app-config change needed.)
+
 ## [1.3.0] - 2026-04-26
 
-### Added — submission sign-off & Slack Router wiring
+### Added — submission sign-off (clause + Drive eSignature)
 
 - **Bilingual "Acceptance & Response Period" clause** (EN + TH) appended to every
   submission PDF AND every submission email body. Default 7 working days,
@@ -21,13 +53,9 @@ All notable changes to this project will be documented in this file.
   DWD impersonation. `driveFileId` + `driveWebViewLink` persisted on the
   submission record. PMs click "Request signature" in Drive UI for native
   Workspace eSignature. (No public API yet — manual step.)
-- **Slack Router wiring (replaces hardcoded channel map):** `src/slack_notifier.py`
-  now resolves channels via the central `data-communications/route_event` HTTP
-  endpoint, fanning out to project SO channel, subcategory channel, customer
-  entity channel — all in one event. Fail-soft fallback to legacy
-  `#submission-materials` / `#submission-drawings` if router unreachable.
-  Auth: shared bearer token in Secret Manager (`data-comms-router-token`).
-  Caches resolution 5 min by `(type, soRef)`.
+- **Slack notification card** carries Open + Drive (Sign) URL buttons
+  (status-page + Drive web-view link). v1.3.1 adds Approve / Reject /
+  Comment buttons routed via slack-router (see v1.3.1 entry above).
 
 ### Changed
 - `src/submission_render.py` — `TEMPLATES` now reads from `docs/reports/`

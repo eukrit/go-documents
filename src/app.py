@@ -321,6 +321,148 @@ def pubsub_push():
 
 
 # ========================================================================
+# SLACK INTERACTIVITY (forwarded from slack-router service)
+# ========================================================================
+
+# Lazy import keeps cold-start small for non-Slack paths.
+def _verify_slack_signature(raw_body: bytes, ts: str, sig: str) -> bool:
+    import hashlib
+    import hmac
+    import time
+    secret = os.environ.get("SLACK_SIGNING_SECRET", "")
+    if not secret or not ts or not sig:
+        return False
+    try:
+        ts_int = int(ts)
+    except ValueError:
+        return False
+    if abs(time.time() - ts_int) > 60 * 5:
+        return False
+    base = b"v0:" + ts.encode("ascii") + b":" + raw_body
+    digest = hmac.new(secret.encode("utf-8"), base, hashlib.sha256).hexdigest()
+    return hmac.compare_digest("v0=" + digest, sig)
+
+
+def _dispatch_submission_action(action_id: str, sid: str, user_id: str,
+                                  trigger_id: str, response_url: str) -> dict:
+    """Dispatch a submission_* action_id to the right handler."""
+    from urllib.parse import parse_qs  # noqa: F401  (imported lazily elsewhere)
+
+    if action_id.startswith("submission_approve_"):
+        update_status(sid, "approved", reviewerRemarks=f"Approved via Slack by {user_id}")
+        sub = get_submission(sid)
+        try:
+            publish_event(event="status_changed", submission=sub,
+                          extra={"reviewedBy": user_id, "via": "slack"})
+        except Exception as e:
+            log.warning("publish_event failed: %s", type(e).__name__)
+        return {"text": f":white_check_mark: {sid} approved by <@{user_id}>"}
+
+    if action_id.startswith("submission_reject_"):
+        update_status(sid, "rejected", reviewerRemarks=f"Rejected via Slack by {user_id}")
+        sub = get_submission(sid)
+        try:
+            publish_event(event="status_changed", submission=sub,
+                          extra={"reviewedBy": user_id, "via": "slack"})
+        except Exception as e:
+            log.warning("publish_event failed: %s", type(e).__name__)
+        return {"text": f":x: {sid} rejected by <@{user_id}>"}
+
+    if action_id.startswith("submission_comment_"):
+        # Surface the dashboard so the reviewer can drop a long-form comment.
+        link = f"{_dashboard_base()}/submissions/{sid}"
+        return {"response_type": "ephemeral",
+                "text": f"Add a comment on {sid}: {link}"}
+
+    # submission_open_* / submission_drive_* are URL buttons; Slack doesn't
+    # actually POST those (they navigate). Defensive no-op.
+    return {"text": ""}
+
+
+def _post_response_url(response_url: str, body: dict) -> None:
+    if not response_url:
+        return
+    import urllib.request
+    req = urllib.request.Request(
+        response_url,
+        data=json.dumps(body).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=5):
+            pass
+    except Exception as e:
+        log.warning("response_url post failed: %s", type(e).__name__)
+
+
+@app.route("/slack/interactivity", methods=["POST"])
+def slack_interactivity():
+    """Receive Slack button clicks forwarded by the slack-router dispatcher.
+
+    slack-router/server.py forwards original Slack body + signature headers,
+    so we re-verify here (defense-in-depth) using SLACK_SIGNING_SECRET — same
+    secret slack-router uses.
+    """
+    raw_body = request.get_data(cache=False)
+    ts = request.headers.get("X-Slack-Request-Timestamp", "")
+    sig = request.headers.get("X-Slack-Signature", "")
+
+    if not _verify_slack_signature(raw_body, ts, sig):
+        return ("invalid signature", 401)
+
+    from urllib.parse import parse_qs
+    form = parse_qs(raw_body.decode("utf-8"))
+    raw_payload = form.get("payload", [""])[0]
+    if not raw_payload:
+        return ("no payload", 400)
+
+    try:
+        payload = json.loads(raw_payload)
+    except json.JSONDecodeError:
+        return ("bad json", 400)
+
+    actions = payload.get("actions") or []
+    if not actions:
+        return ("", 200)
+    action = actions[0]
+    action_id = action.get("action_id", "")
+    sid = action.get("value") or _sid_from_action_id(action_id)
+    user_id = (payload.get("user") or {}).get("id", "")
+    trigger_id = payload.get("trigger_id", "")
+    response_url = payload.get("response_url", "")
+
+    if not action_id.startswith("submission_"):
+        return ("unrouted action_id", 400)
+
+    if not sid:
+        return ("missing submission id", 400)
+
+    try:
+        body = _dispatch_submission_action(
+            action_id, sid, user_id, trigger_id, response_url,
+        )
+    except ValueError as e:
+        body = {"response_type": "ephemeral",
+                "text": f":warning: {str(e)}"}
+    except Exception as e:
+        log.error("interactivity dispatch failed: %s", e)
+        body = {"response_type": "ephemeral",
+                "text": ":warning: Internal error — see logs."}
+
+    if body and body.get("text"):
+        _post_response_url(response_url, body)
+
+    return ("", 200)
+
+
+def _sid_from_action_id(action_id: str) -> str:
+    """Extract the submission id from action_ids like submission_approve_MS-SO26-017-001."""
+    parts = action_id.split("_", 2)
+    return parts[2] if len(parts) >= 3 else ""
+
+
+# ========================================================================
 # LEGACY document-records viewer (quotations / datasheets / etc.)
 # ========================================================================
 
