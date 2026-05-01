@@ -41,7 +41,7 @@ steps:
             --image $_REPO/$_SERVICE:$SHORT_SHA \
             --region $_REGION \
             --platform managed \
-            --allow-unauthenticated \
+            --no-allow-unauthenticated \
             --service-account=claude@$PROJECT_ID.iam.gserviceaccount.com \
             --min-instances=0 \
             --max-instances=3 \
