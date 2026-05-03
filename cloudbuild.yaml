@@ -47,7 +47,7 @@ steps:
             --max-instances=3 \
             --memory=1Gi \
             --cpu=1 \
-            --set-env-vars=GCP_PROJECT=$PROJECT_ID,SUBMISSION_SENDER=eukrit@goco.bz,SUBMISSION_EVENTS_TOPIC=submission-events
+            --set-env-vars=GCP_PROJECT=$PROJECT_ID,SUBMISSION_SENDER=eukrit@goco.bz,SUBMISSION_EVENTS_TOPIC=submission-events,SUBMISSIONS_DRIVE_FOLDER_ID=1gAhGAI94Z96aFUm3nCp66QO573ixm-Vh,SLACK_SIGNING_SECRET_NAME=slack-signing-secret,SUBMISSION_RESPONSE_DAYS=7
           echo "Deployed $_SERVICE:$SHORT_SHA to Cloud Run"
         else
           echo "Branch $BRANCH_NAME: skipping deploy (build only)"
