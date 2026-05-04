@@ -61,3 +61,6 @@ Thumbs.db
 .claude/debug/
 .claude/downloads/
 .claude/telemetry/
+.claude/worktrees/
+.claude/settings.json
+.claude/settings.local.json
