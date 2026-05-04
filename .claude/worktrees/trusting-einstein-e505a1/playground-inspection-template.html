@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playground Safety Inspection Certificate - Leka Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #182557;
+    --purple: #8003FF;
+    --cream: #FFF9E6;
+    --magenta: #970260;
+    --amber: #FFA900;
+    --red-orange: #E54822;
+    --white: #FFFFFF;
+    --light-gray: #F5F5F7;
+    --mid-gray: #E0E0E6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    color: var(--navy);
+    background: var(--white);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .certificate {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    background: var(--white);
+  }
+
+  /* Top accent bar */
+  .top-bar {
+    height: 8px;
+    background: linear-gradient(90deg, var(--purple) 0%, var(--magenta) 25%, var(--red-orange) 50%, var(--amber) 75%, var(--purple) 100%);
+  }
+
+  /* Header */
+  .header {
+    background: var(--navy);
+    padding: 28px 48px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header .logo svg {
+    height: 36px;
+    width: auto;
+  }
+
+  .header .brand-text {
+    color: var(--cream);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-align: right;
+    line-height: 1.5;
+  }
+
+  /* Title section */
+  .title-section {
+    padding: 32px 48px 20px;
+    border-bottom: 3px solid var(--purple);
+    margin: 0 48px;
+    text-align: center;
+  }
+
+  .title-section h1 {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+
+  .title-section .subtitle {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--purple);
+    letter-spacing: 0.5px;
+  }
+
+  /* Body */
+  .body {
+    padding: 24px 48px;
+  }
+
+  /* Field grid */
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-bottom: 20px;
+  }
+
+  .field-grid.single {
+    grid-template-columns: 1fr;
+  }
+
+  .field {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--mid-gray);
+  }
+
+  .field-grid > .field:nth-child(odd) {
+    padding-right: 20px;
+  }
+
+  .field-grid > .field:nth-child(even) {
+    padding-left: 20px;
+    border-left: 1px solid var(--mid-gray);
+  }
+
+  .field-grid.single > .field {
+    padding-left: 0;
+    padding-right: 0;
+    border-left: none;
+  }
+
+  .field-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--purple);
+    margin-bottom: 4px;
+  }
+
+  .field-value {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--navy);
+    min-height: 18px;
+  }
+
+  .field-value.placeholder {
+    border-bottom: 1px dotted var(--mid-gray);
+    min-height: 18px;
+    color: #999;
+    font-style: italic;
+  }
+
+  /* Sections */
+  .section {
+    margin-bottom: 18px;
+  }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--navy);
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--purple);
+    margin-bottom: 10px;
+  }
+
+  .section-body {
+    font-size: 11.5px;
+    line-height: 1.65;
+    color: var(--navy);
+  }
+
+  /* Summary statement options */
+  .summary-option {
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    border-left: 3px solid var(--purple);
+    background: var(--cream);
+    font-size: 11px;
+    line-height: 1.6;
+    position: relative;
+  }
+
+  .summary-option .option-label {
+    font-weight: 700;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--purple);
+    margin-bottom: 4px;
+  }
+
+  .checkbox {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid var(--navy);
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+  }
+
+  .checkbox.checked {
+    background: var(--purple);
+    border-color: var(--purple);
+    color: white;
+    font-size: 10px;
+    line-height: 12px;
+    text-align: center;
+  }
+
+  /* Referenced docs */
+  .ref-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .ref-list li {
+    font-size: 11px;
+    padding: 4px 0;
+    border-bottom: 1px dotted var(--mid-gray);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .ref-list li span.ref-label {
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  .ref-list li span.ref-value {
+    color: #999;
+    font-style: italic;
+  }
+
+  /* Inspector block */
+  .inspector-block {
+    background: var(--cream);
+    padding: 16px 20px;
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 32px;
+    margin-bottom: 18px;
+  }
+
+  .inspector-block .insp-field {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .inspector-block .insp-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--purple);
+    margin-bottom: 2px;
+  }
+
+  .inspector-block .insp-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  /* Signature */
+  .signature-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    margin-top: 20px;
+    margin-bottom: 16px;
+  }
+
+  .sig-box {
+    text-align: center;
+  }
+
+  .sig-line {
+    border-bottom: 2px solid var(--navy);
+    height: 48px;
+    margin-bottom: 6px;
+  }
+
+  .sig-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--purple);
+  }
+
+  /* Limitations */
+  .limitations {
+    font-size: 8.5px;
+    line-height: 1.55;
+    color: #666;
+    padding: 12px 16px;
+    border: 1px solid var(--mid-gray);
+    border-radius: 4px;
+    background: var(--light-gray);
+  }
+
+  .limitations .lim-title {
+    font-size: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+
+  /* Bottom bar */
+  .bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--purple) 0%, var(--magenta) 25%, var(--red-orange) 50%, var(--amber) 75%, var(--purple) 100%);
+  }
+
+  /* Page 2 - Short version */
+  .page-break {
+    page-break-before: always;
+  }
+
+  .short-cert .body {
+    padding: 32px 48px;
+  }
+
+  .short-cert .statement {
+    font-size: 12.5px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .short-cert .intro-statement {
+    font-size: 13px;
+    line-height: 1.7;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .short-field-grid {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 8px 16px;
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    background: var(--cream);
+    border-radius: 8px;
+  }
+
+  .short-field-grid .sf-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  .short-field-grid .sf-value {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--navy);
+    border-bottom: 1px dotted var(--mid-gray);
+    min-height: 18px;
+  }
+
+  /* Print styles */
+  @media print {
+    body { background: white; }
+    .certificate { margin: 0; box-shadow: none; }
+    .no-print { display: none; }
+  }
+
+  /* Screen preview */
+  @media screen {
+    body {
+      background: #e0e0e0;
+      padding: 20px;
+    }
+    .certificate {
+      box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+      margin-bottom: 40px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================ -->
+<!-- PAGE 1: FULL CERTIFICATE                     -->
+<!-- ============================================ -->
+<div class="certificate">
+
+  <div class="top-bar"></div>
+
+  <div class="header">
+    <div class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 598.32 101.73" height="36">
+        <defs><style>.ls1{fill:#970260}.ls2{fill:#FFF9E6}.ls3{fill:#8003ff}.ls4{fill:#e54822}.ls5{fill:#ffa900}</style></defs>
+        <path class="ls3" d="m11.31,41.11l2.98.26c.87.08,1.64-.57,1.73-1.44.85-8.27,2.52-14.7,4.73-18.59-4.81,5.24-8.35,11.66-10.15,18.78-.12.47.22.94.71.99Z"/>
+        <path class="ls3" d="m66.48,42.61l6.35-5c1.9-1.49,2.17-4.27.6-6.1-3.08-3.58-8.41-9.47-14.79-15.12-3.52-3.12-6.94-5.78-10.24-7.99-.81-.54-1.8-.76-2.76-.6-7.76,1.3-14.83,4.64-20.62,9.46,7.92-2.3,24.79,12.07,35.61,24.78,1.47,1.73,4.06,1.97,5.84.57Z"/>
+        <path class="ls1" d="m44.11,43.16c1.73-1.47,1.97-4.06.56-5.85l-2.56-3.25-2.44-3.1c-1.49-1.9-4.27-2.18-6.1-.6-3.58,3.08-9.47,8.41-15.12,14.79-3.12,3.52-5.78,6.94-7.99,10.24-.54.81-.76,1.8-.6,2.76,1.3,7.76,4.64,14.83,9.46,20.62-2.3-7.91,12.07-24.79,24.78-35.61Z"/>
+        <path class="ls1" d="m23.41,83.04c5.24,4.81,11.66,8.35,18.78,10.15.47.12.94-.22.99-.71l.26-2.98c.08-.87-.57-1.64-1.44-1.73-8.27-.85-14.7-2.52-18.59-4.73Z"/>
+        <path class="ls4" d="m47.21,85.34c3.53,3.12,6.94,5.78,10.25,7.99.81.54,1.8.76,2.76.6,7.76-1.3,14.82-4.64,20.62-9.46-7.91,2.31-24.79-12.07-35.61-24.78-1.47-1.73-4.06-1.97-5.85-.56l-3.25,2.56-3.1,2.44c-1.9,1.49-2.18,4.27-.6,6.1,3.08,3.58,8.41,9.47,14.78,15.12Z"/>
+        <path class="ls4" d="m89.85,61.79c-.85,8.27-2.52,14.7-4.74,18.6,4.81-5.24,8.35-11.67,10.15-18.78.12-.47-.22-.94-.71-.99l-2.98-.26c-.87-.08-1.64.57-1.73,1.44Z"/>
+        <path class="ls5" d="m82.46,18.68c-5.24-4.81-11.67-8.35-18.78-10.15-.47-.12-.94.22-.99.71l-.26,2.98c-.08.87.57,1.64,1.44,1.73,8.27.85,14.7,2.52,18.6,4.74Z"/>
+        <path class="ls5" d="m61.75,58.57c-1.73,1.47-1.97,4.06-.56,5.85l2.55,3.23,2.45,3.12c1.49,1.9,4.27,2.18,6.1.6,3.58-3.08,9.47-8.41,15.12-14.79,3.12-3.52,5.78-6.94,7.99-10.24.54-.81.76-1.8.6-2.76-1.3-7.76-4.64-14.83-9.46-20.62,2.31,7.91-12.07,24.79-24.78,35.61Z"/>
+        <path class="ls2" d="m157.37,75.93c-5.74,0-8.77-3.06-8.77-8.86V15.35h-10.27v52.52c0,11.04,6.69,17.62,17.89,17.62,1.41,0,3.41-.11,4.93-.61l1.09-.36v-9.52l-2.01.55c-.97.26-1.88.39-2.86.39Z"/>
+        <path class="ls2" d="m187.58,34.92c-14.54,0-25.51,11.04-25.51,25.69s11,25.77,25.6,25.77c8.3,0,15.2-3.38,19.97-9.76l.82-1.09-6.38-6.51-1.12,1.4c-3.4,4.25-7.84,6.4-13.19,6.4-7.4,0-13.01-4.46-14.73-11.52h38.19l.17-1.4c.1-.8.19-2.37.19-3.3,0-14.88-10.09-25.69-24-25.69Zm-.09,9.47c7.21,0,12.51,4.63,13.64,11.7h-28.13c1.63-7.17,7.15-11.7,14.49-11.7Z"/>
+        <path class="ls2" d="m256.31,43.07c0-2.14-.08-3.63-.28-5.32l-.17-1.41h-10.43l.26,1.82c.24,1.66.34,3.1.34,4.82,0,8.28-5.17,13.02-14.17,13.02-1.1,0-2.11,0-3.01-.04V15.35h-10.27v69.62h10.27v-19.51c1.05.07,2.21.11,3.28.11,1.55,0,3.03-.12,4.37-.25l11.46,19.65h11.94l-13.51-22.86c6.33-3.77,9.92-10.61,9.92-19.04Z"/>
+        <path class="ls2" d="m302.38,40.96c-3.35-3.4-8.79-6.03-15.95-6.03-14.73,0-25.42,10.8-25.42,25.69s10.38,25.77,25.26,25.77c6.64-.07,12.45-2.52,16.11-6.55v5.13h9.83v-48.62h-9.83v4.62Zm-.18,19.65c0,9.39-6.52,16.21-15.5,16.21s-15.33-6.97-15.33-16.21,6.45-16.21,15.33-16.21,15.5,6.67,15.5,16.21Z"/>
+        <path class="ls2" d="m326.65,73.54c-3.32,0-6.02,2.7-6.02,6.02s2.7,6.02,6.02,6.02,6.02-2.7,6.02-6.02-2.7-6.02-6.02-6.02Z"/>
+        <path class="ls2" d="m354.82,44.13c3.89,0,7,2.28,8.33,6.11l.62,1.78,8.17-4.49-.47-1.29c-2.66-7.19-8.79-11.32-16.82-11.32-8.99,0-15.76,6.02-15.76,13.99s5.49,11.85,10.85,14.29l5.59,2.57c4.96,2.24,5.97,4.02,5.97,5.99,0,4.72-4.46,5.23-6.38,5.23-5.33,0-8.53-3.84-9.25-7.4l-.42-2.11-8.54,4.61.26,1.17c1.77,7.97,8.64,13.12,17.5,13.12,10.22,0,17.09-5.87,17.09-14.61s-5.75-12.02-10.76-14.29l-6.02-2.75c-4.9-2.26-5.8-3.76-5.8-5.9,0-2.81,2.35-4.7,5.85-4.7Z"/>
+        <path class="ls2" d="m390.34,24.2h-10.27v12.14h-5.49v9.38h5.49v22.41c0,11.26,6.46,17.71,17.71,17.71,2.05,0,4.14-.36,5.73-1l1-.4v-9.6l-2.16.83c-.89.34-2.06.51-3.5.51-5.64,0-8.51-2.95-8.51-8.77v-21.7h15.24v-9.38h-15.24v-12.14Z"/>
+        <path class="ls2" d="m440.39,66.54c0,6.15-3.99,10.28-9.92,10.28s-9.92-4.23-9.92-10.28v-30.2h-10.27v30.11c0,11.55,8.49,19.93,20.19,19.93s20.19-8.12,20.19-19.75v-30.29h-10.27v30.2Z"/>
+        <path class="ls2" d="m498.5,40.15c0,.14,0,.28,0,.42-3.76-3.48-9.61-5.64-15.86-5.64-14.81,0-25.15,10.56-25.15,25.69s10.31,25.77,25.07,25.77c6.76,0,12.56-2.34,16.39-6.45v5.03h9.74V15.35h-10.18v24.8Zm.27,20.46c0,9.34-6.48,16.12-15.41,16.12s-15.41-6.78-15.41-16.12,6.48-16.21,15.41-16.21,15.41,6.82,15.41,16.21Z"/>
+        <rect class="ls2" x="519.59" y="36.34" width="10.27" height="48.62"/>
+        <path class="ls2" d="m524.72,18.8c-3.43,0-6.11,2.64-6.11,6.02s2.63,6.2,6.11,6.2,6.11-2.72,6.11-6.2-2.74-6.02-6.11-6.02Z"/>
+        <path class="ls2" d="m562.9,34.92c-14.59,0-25.6,11.04-25.6,25.69s11,25.77,25.6,25.77,25.6-11.08,25.6-25.77-11-25.69-25.6-25.69Zm0,41.9c-8.78,0-15.15-6.82-15.15-16.21s6.37-16.21,15.15-16.21,15.24,6.82,15.24,16.21-6.41,16.21-15.24,16.21Z"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      Playground Safety Division<br>
+      www.leka.studio
+    </div>
+  </div>
+
+  <div class="title-section">
+    <h1>Playground Safety Inspection Certificate</h1>
+    <div class="subtitle">Issued by a current NRPA Certified Playground Safety Inspector (CPSI) &mdash; Rev. R1</div>
+  </div>
+
+  <div class="body">
+
+    <!-- Site Information -->
+    <div class="field-grid">
+      <div class="field">
+        <div class="field-label">Certificate / Report No.</div>
+        <div class="field-value">{{report_no}}</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Inspection Date</div>
+        <div class="field-value">{{inspection_date}}</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Playground Name</div>
+        <div class="field-value">{{playground_name}}</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Inspection Type</div>
+        <div class="field-value">{{inspection_type}}</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Site Location</div>
+        <div class="field-value">{{site_location}}</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Recommended Reinspection Date</div>
+        <div class="field-value">{{reinspection_date}}</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Owner / Operator</div>
+        <div class="field-value">{{owner_operator}}</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Intended User Age Group</div>
+        <div class="field-value">{{age_group}}</div>
+      </div>
+    </div>
+
+    <!-- Warranty Period (R1) -->
+    <div class="field-grid single">
+      <div class="field">
+        <div class="field-label">Warranty Period</div>
+        <div class="field-value">{{warranty_start}} &ndash; {{warranty_end}} ({{warranty_months}} months from Handover Date)</div>
+      </div>
+    </div>
+
+    <!-- Scope -->
+    <div class="section">
+      <div class="section-title">Inspection Scope</div>
+      <div class="section-body">
+        This certificate confirms that a playground safety inspection was performed for the above site in accordance with the scope described in the referenced inspection report.
+      </div>
+    </div>
+
+    <!-- Criteria -->
+    <div class="section">
+      <div class="section-title">Criteria Referenced</div>
+      <div class="section-body">
+        Applicable current ASTM public playground standards, the U.S. Consumer Product Safety Commission (CPSC) Public Playground Safety Handbook, manufacturer installation and maintenance documentation, and site conditions observed on the inspection date.
+      </div>
+    </div>
+
+    <!-- Summary Statement -->
+    <div class="section">
+      <div class="section-title">Summary Statement</div>
+      <div class="summary-option">
+        <div style="display: flex; align-items: flex-start; gap: 8px;">
+          <span class="checkbox {{#substantial_compliance}}checked{{/substantial_compliance}}"{{#substantial_compliance}}>&#10003;{{/substantial_compliance}}{{^substantial_compliance}}>{{/substantial_compliance}}</span>
+          <div>
+            <div class="option-label">Substantial Compliance</div>
+            {{#substantial_compliance}}<strong>{{/substantial_compliance}}Based on the inspection performed, the playground conditions observed on the inspection date were found to be in substantial compliance with the referenced criteria, subject to continued maintenance, prompt correction of newly arising hazards, and periodic reinspection.{{#substantial_compliance}}</strong>{{/substantial_compliance}}
+          </div>
+        </div>
+      </div>
+      <div class="summary-option">
+        <div style="display: flex; align-items: flex-start; gap: 8px;">
+          <span class="checkbox {{#corrective_action}}checked{{/corrective_action}}"{{#corrective_action}}>&#10003;{{/corrective_action}}{{^corrective_action}}>{{/corrective_action}}</span>
+          <div>
+            <div class="option-label">Corrective Action Required</div>
+            {{#corrective_action}}<strong>{{/corrective_action}}A playground safety inspection was completed and documented. Conditions requiring corrective action are identified in the associated report. This certificate confirms completion of the inspection and issuance of findings only, and does not certify correction of listed deficiencies unless separately verified in writing.{{#corrective_action}}</strong>{{/corrective_action}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Referenced Documents -->
+    <div class="section">
+      <div class="section-title">Referenced Documents</div>
+      <ul class="ref-list">
+        <li><span class="ref-label">Inspection Report No.</span> <span class="ref-value">{{report_no}}</span></li>
+        <li><span class="ref-label">Site Plan / Inventory Ref.</span> <span class="ref-value">{{report_no}}</span></li>
+        <li><span class="ref-label">Photo Record Ref.</span> <span class="ref-value">{{report_no}}</span></li>
+      </ul>
+    </div>
+
+    <!-- Inspector -->
+    <div class="inspector-block">
+      <div class="insp-field">
+        <div class="insp-label">Inspector Name</div>
+        <div class="insp-value">{{inspector_name}}</div>
+      </div>
+      <div class="insp-field">
+        <div class="insp-label">CPSI Certificate No.</div>
+        <div class="insp-value">{{cpsi_cert_no}}</div>
+      </div>
+      <div class="insp-field">
+        <div class="insp-label">Credential</div>
+        <div class="insp-value">{{inspector_credential}}</div>
+      </div>
+      <div class="insp-field">
+        <div class="insp-label">CPSI Expiration Date</div>
+        <div class="insp-value">{{cpsi_expiration}}</div>
+      </div>
+    </div>
+
+    <!-- Signature -->
+    <div class="signature-row">
+      <div class="sig-box">
+        <div class="sig-line"></div>
+        <div class="sig-label">Inspector Signature</div>
+      </div>
+      <div class="sig-box">
+        <div class="sig-line"></div>
+        <div class="sig-label">Date Issued</div>
+      </div>
+    </div>
+
+    <!-- Limitations -->
+    <div class="limitations">
+      <div class="lim-title">Limitations & Disclaimer</div>
+      This certificate is a summary of the inspection identified above and must be read together with the corresponding inspection report, findings, photographs, and cited criteria. It reflects conditions observed on the inspection date only. Continued compliance depends on proper maintenance, supervision, repair, surfacing upkeep, and protection from wear, vandalism, weather, misuse, and later modifications. This certificate does not constitute a warranty, guarantee of future safety, or substitute for the owner/operator's ongoing duty of care.
+    </div>
+
+  </div>
+
+  <div class="bottom-bar"></div>
+
+</div>
+
+<!-- ============================================ -->
+<!-- PAGE 2: SHORT PASS CERTIFICATE               -->
+<!-- ============================================ -->
+<div class="certificate short-cert page-break">
+
+  <div class="top-bar"></div>
+
+  <div class="header">
+    <div class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 598.32 101.73" height="36">
+        <defs><style>.ls1b{fill:#970260}.ls2b{fill:#FFF9E6}.ls3b{fill:#8003ff}.ls4b{fill:#e54822}.ls5b{fill:#ffa900}</style></defs>
+        <path class="ls3b" d="m11.31,41.11l2.98.26c.87.08,1.64-.57,1.73-1.44.85-8.27,2.52-14.7,4.73-18.59-4.81,5.24-8.35,11.66-10.15,18.78-.12.47.22.94.71.99Z"/>
+        <path class="ls3b" d="m66.48,42.61l6.35-5c1.9-1.49,2.17-4.27.6-6.1-3.08-3.58-8.41-9.47-14.79-15.12-3.52-3.12-6.94-5.78-10.24-7.99-.81-.54-1.8-.76-2.76-.6-7.76,1.3-14.83,4.64-20.62,9.46,7.92-2.3,24.79,12.07,35.61,24.78,1.47,1.73,4.06,1.97,5.84.57Z"/>
+        <path class="ls1b" d="m44.11,43.16c1.73-1.47,1.97-4.06.56-5.85l-2.56-3.25-2.44-3.1c-1.49-1.9-4.27-2.18-6.1-.6-3.58,3.08-9.47,8.41-15.12,14.79-3.12,3.52-5.78,6.94-7.99,10.24-.54.81-.76,1.8-.6,2.76,1.3,7.76,4.64,14.83,9.46,20.62-2.3-7.91,12.07-24.79,24.78-35.61Z"/>
+        <path class="ls1b" d="m23.41,83.04c5.24,4.81,11.66,8.35,18.78,10.15.47.12.94-.22.99-.71l.26-2.98c.08-.87-.57-1.64-1.44-1.73-8.27-.85-14.7-2.52-18.59-4.73Z"/>
+        <path class="ls4b" d="m47.21,85.34c3.53,3.12,6.94,5.78,10.25,7.99.81.54,1.8.76,2.76.6,7.76-1.3,14.82-4.64,20.62-9.46-7.91,2.31-24.79-12.07-35.61-24.78-1.47-1.73-4.06-1.97-5.85-.56l-3.25,2.56-3.1,2.44c-1.9,1.49-2.18,4.27-.6,6.1,3.08,3.58,8.41,9.47,14.78,15.12Z"/>
+        <path class="ls4b" d="m89.85,61.79c-.85,8.27-2.52,14.7-4.74,18.6,4.81-5.24,8.35-11.67,10.15-18.78.12-.47-.22-.94-.71-.99l-2.98-.26c-.87-.08-1.64.57-1.73,1.44Z"/>
+        <path class="ls5b" d="m82.46,18.68c-5.24-4.81-11.67-8.35-18.78-10.15-.47-.12-.94.22-.99.71l-.26,2.98c-.08.87.57,1.64,1.44,1.73,8.27.85,14.7,2.52,18.6,4.74Z"/>
+        <path class="ls5b" d="m61.75,58.57c-1.73,1.47-1.97,4.06-.56,5.85l2.55,3.23,2.45,3.12c1.49,1.9,4.27,2.18,6.1.6,3.58-3.08,9.47-8.41,15.12-14.79,3.12-3.52,5.78-6.94,7.99-10.24.54-.81.76-1.8.6-2.76-1.3-7.76-4.64-14.83-9.46-20.62,2.31,7.91-12.07,24.79-24.78,35.61Z"/>
+        <path class="ls2b" d="m157.37,75.93c-5.74,0-8.77-3.06-8.77-8.86V15.35h-10.27v52.52c0,11.04,6.69,17.62,17.89,17.62,1.41,0,3.41-.11,4.93-.61l1.09-.36v-9.52l-2.01.55c-.97.26-1.88.39-2.86.39Z"/>
+        <path class="ls2b" d="m187.58,34.92c-14.54,0-25.51,11.04-25.51,25.69s11,25.77,25.6,25.77c8.3,0,15.2-3.38,19.97-9.76l.82-1.09-6.38-6.51-1.12,1.4c-3.4,4.25-7.84,6.4-13.19,6.4-7.4,0-13.01-4.46-14.73-11.52h38.19l.17-1.4c.1-.8.19-2.37.19-3.3,0-14.88-10.09-25.69-24-25.69Zm-.09,9.47c7.21,0,12.51,4.63,13.64,11.7h-28.13c1.63-7.17,7.15-11.7,14.49-11.7Z"/>
+        <path class="ls2b" d="m256.31,43.07c0-2.14-.08-3.63-.28-5.32l-.17-1.41h-10.43l.26,1.82c.24,1.66.34,3.1.34,4.82,0,8.28-5.17,13.02-14.17,13.02-1.1,0-2.11,0-3.01-.04V15.35h-10.27v69.62h10.27v-19.51c1.05.07,2.21.11,3.28.11,1.55,0,3.03-.12,4.37-.25l11.46,19.65h11.94l-13.51-22.86c6.33-3.77,9.92-10.61,9.92-19.04Z"/>
+        <path class="ls2b" d="m302.38,40.96c-3.35-3.4-8.79-6.03-15.95-6.03-14.73,0-25.42,10.8-25.42,25.69s10.38,25.77,25.26,25.77c6.64-.07,12.45-2.52,16.11-6.55v5.13h9.83v-48.62h-9.83v4.62Zm-.18,19.65c0,9.39-6.52,16.21-15.5,16.21s-15.33-6.97-15.33-16.21,6.45-16.21,15.33-16.21,15.5,6.67,15.5,16.21Z"/>
+        <path class="ls2b" d="m326.65,73.54c-3.32,0-6.02,2.7-6.02,6.02s2.7,6.02,6.02,6.02,6.02-2.7,6.02-6.02-2.7-6.02-6.02-6.02Z"/>
+        <path class="ls2b" d="m354.82,44.13c3.89,0,7,2.28,8.33,6.11l.62,1.78,8.17-4.49-.47-1.29c-2.66-7.19-8.79-11.32-16.82-11.32-8.99,0-15.76,6.02-15.76,13.99s5.49,11.85,10.85,14.29l5.59,2.57c4.96,2.24,5.97,4.02,5.97,5.99,0,4.72-4.46,5.23-6.38,5.23-5.33,0-8.53-3.84-9.25-7.4l-.42-2.11-8.54,4.61.26,1.17c1.77,7.97,8.64,13.12,17.5,13.12,10.22,0,17.09-5.87,17.09-14.61s-5.75-12.02-10.76-14.29l-6.02-2.75c-4.9-2.26-5.8-3.76-5.8-5.9,0-2.81,2.35-4.7,5.85-4.7Z"/>
+        <path class="ls2b" d="m390.34,24.2h-10.27v12.14h-5.49v9.38h5.49v22.41c0,11.26,6.46,17.71,17.71,17.71,2.05,0,4.14-.36,5.73-1l1-.4v-9.6l-2.16.83c-.89.34-2.06.51-3.5.51-5.64,0-8.51-2.95-8.51-8.77v-21.7h15.24v-9.38h-15.24v-12.14Z"/>
+        <path class="ls2b" d="m440.39,66.54c0,6.15-3.99,10.28-9.92,10.28s-9.92-4.23-9.92-10.28v-30.2h-10.27v30.11c0,11.55,8.49,19.93,20.19,19.93s20.19-8.12,20.19-19.75v-30.29h-10.27v30.2Z"/>
+        <path class="ls2b" d="m498.5,40.15c0,.14,0,.28,0,.42-3.76-3.48-9.61-5.64-15.86-5.64-14.81,0-25.15,10.56-25.15,25.69s10.31,25.77,25.07,25.77c6.76,0,12.56-2.34,16.39-6.45v5.03h9.74V15.35h-10.18v24.8Zm.27,20.46c0,9.34-6.48,16.12-15.41,16.12s-15.41-6.78-15.41-16.12,6.48-16.21,15.41-16.21,15.41,6.82,15.41,16.21Z"/>
+        <rect class="ls2b" x="519.59" y="36.34" width="10.27" height="48.62"/>
+        <path class="ls2b" d="m524.72,18.8c-3.43,0-6.11,2.64-6.11,6.02s2.63,6.2,6.11,6.2,6.11-2.72,6.11-6.2-2.74-6.02-6.11-6.02Z"/>
+        <path class="ls2b" d="m562.9,34.92c-14.59,0-25.6,11.04-25.6,25.69s11,25.77,25.6,25.77,25.6-11.08,25.6-25.77-11-25.69-25.6-25.69Zm0,41.9c-8.78,0-15.15-6.82-15.15-16.21s6.37-16.21,15.15-16.21,15.24,6.82,15.24,16.21-6.41,16.21-15.24,16.21Z"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      Playground Safety Division<br>
+      www.leka.studio
+    </div>
+  </div>
+
+  <div class="title-section">
+    <h1>Playground Safety Inspection Certificate</h1>
+    <div class="subtitle">Short Form &mdash; Substantial Compliance &mdash; Rev. R1</div>
+  </div>
+
+  <div class="body">
+
+    <div class="intro-statement" style="margin-top: 24px;">
+      This certifies that the playground identified below was inspected by<br>
+      <strong>{{inspector_name}}</strong>, a current NRPA Certified Playground Safety Inspector<br>
+      (CPSI Certificate No. {{cpsi_cert_no}}, expiring {{cpsi_expiration}}).
+    </div>
+
+    <div class="short-field-grid">
+      <div class="sf-label">Playground</div>
+      <div class="sf-value">{{playground_name}}</div>
+      <div class="sf-label">Location</div>
+      <div class="sf-value">{{site_location_short}}</div>
+      <div class="sf-label">Owner / Operator</div>
+      <div class="sf-value">{{owner_operator}}</div>
+      <div class="sf-label">Report No.</div>
+      <div class="sf-value">{{report_no}}</div>
+      <div class="sf-label">Inspection Date</div>
+      <div class="sf-value">{{inspection_date}}</div>
+      <div class="sf-label">Warranty Period</div>
+      <div class="sf-value">{{warranty_start}} &ndash; {{warranty_end}}</div>
+    </div>
+
+    <div class="section" style="margin-bottom: 32px;">
+      <div class="section-title">Finding</div>
+      <div class="section-body" style="font-size: 12.5px; line-height: 1.75;">
+        Based on the scope of inspection described in the associated report and the conditions observed on the inspection date, the playground was found to be in <strong>substantial compliance</strong> with the referenced applicable ASTM public playground criteria and the U.S. CPSC Public Playground Safety Handbook, subject to continued maintenance, repair, supervision, and periodic reinspection.
+      </div>
+    </div>
+
+    <!-- Criteria -->
+    <div class="section" style="margin-bottom: 32px;">
+      <div class="section-title">Criteria Referenced</div>
+      <div class="section-body">
+        Applicable current ASTM public playground standards, the U.S. Consumer Product Safety Commission (CPSC) Public Playground Safety Handbook, manufacturer installation and maintenance documentation, and site conditions observed on the inspection date.
+      </div>
+    </div>
+
+    <!-- Inspector -->
+    <div class="inspector-block" style="margin-bottom: 28px;">
+      <div class="insp-field">
+        <div class="insp-label">Inspector Name</div>
+        <div class="insp-value">{{inspector_name}}</div>
+      </div>
+      <div class="insp-field">
+        <div class="insp-label">CPSI Certificate No.</div>
+        <div class="insp-value">{{cpsi_cert_no}}</div>
+      </div>
+      <div class="insp-field">
+        <div class="insp-label">Credential</div>
+        <div class="insp-value">{{inspector_credential}}</div>
+      </div>
+      <div class="insp-field">
+        <div class="insp-label">CPSI Expiration Date</div>
+        <div class="insp-value">{{cpsi_expiration}}</div>
+      </div>
+    </div>
+
+    <!-- Signature -->
+    <div class="signature-row" style="margin-bottom: 32px;">
+      <div class="sig-box">
+        <div class="sig-line"></div>
+        <div class="sig-label">Inspector Signature</div>
+      </div>
+      <div class="sig-box">
+        <div class="sig-line"></div>
+        <div class="sig-label">Date Issued</div>
+      </div>
+    </div>
+
+    <!-- Limitations -->
+    <div class="limitations">
+      <div class="lim-title">Limitations & Disclaimer</div>
+      This certificate is a summary of the inspection identified above and must be read together with the corresponding inspection report, findings, photographs, and cited criteria. It reflects conditions observed on the inspection date only. Continued compliance depends on proper maintenance, supervision, repair, surfacing upkeep, and protection from wear, vandalism, weather, misuse, and later modifications. This certificate does not constitute a warranty, guarantee of future safety, or substitute for the owner/operator's ongoing duty of care.
+    </div>
+
+  </div>
+
+  <div class="bottom-bar"></div>
+
+</div>
+
+</body>
+</html>

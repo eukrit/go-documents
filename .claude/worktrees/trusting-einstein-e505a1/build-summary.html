@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>go-documents — Build Summary</title>
+  <style>
+    body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 880px; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; }
+    h1 { margin-bottom: 0.25rem; }
+    .meta { color: #666; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+    .badge-success { background: #d1fae5; color: #065f46; }
+    .badge-failed  { background: #fee2e2; color: #991b1b; }
+    .badge-pending { background: #fef3c7; color: #92400e; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #eee; vertical-align: top; }
+    th { background: #fafafa; font-weight: 600; }
+    code { background: #f4f4f5; padding: 1px 6px; border-radius: 4px; font-size: 0.9em; }
+    a { color: #2563eb; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h1>go-documents</h1>
+  <div class="meta">
+    Repo: <a href="https://github.com/eukrit/go-documents">https://github.com/eukrit/go-documents</a> ·
+    Branch: <code>main</code> ·
+    Last updated: 2026-04-19
+  </div>
+
+  <h2>Latest build</h2>
+  <p>
+    Version <strong>1.5.0</strong> ·
+    <span class="badge badge-success">success</span>
+  </p>
+  <p>
+    Removed the Tensile Technic playground template and introduced a dedicated
+    <code>shade-inspection</code> document type for tensile / shade structures —
+    new Pydantic model, HTML certificate (<code>TSI-{YY}-{NNN}</code>), and Firestore template
+    referencing ASCE/SEI 55, NFPA 701, AS 2428, AS/NZS 1170, EN 13782, and the IFAI/TMA maintenance guide.
+  </p>
+  <p>
+    <a href="CHANGELOG.md">Full build log</a>
+  </p>
+
+  <h2>Recent versions</h2>
+  <table>
+    <thead><tr><th>Version</th><th>Date</th><th>Summary</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>1.5.0</td>
+        <td>2026-04-20</td>
+        <td>Replaced TT playground inspection with <code>shade-inspection</code> type (model, HTML certificate, Firestore template; ASCE/SEI 55 + AS 2428 + IFAI/TMA).</td>
+        <td><span class="badge badge-success">success</span></td>
+      </tr>
+      <tr>
+        <td>1.4.0</td>
+        <td>2026-04-20</td>
+        <td>Business-unit tagging + Tensile Technic brand: 3 templates, 4 HTML files, 50 MA records (<code>TT-26-001</code>..<code>TT-26-050</code>).</td>
+        <td><span class="badge badge-success">success</span></td>
+      </tr>
+      <tr>
+        <td>1.3.0</td>
+        <td>2026-04-19</td>
+        <td>Material-approval SOP + 49 Serge Ferrari PVC stubs (<code>MA26-002</code>..<code>MA26-050</code>) via seed/bulk importer.</td>
+        <td><span class="badge badge-success">success</span></td>
+      </tr>
+      <tr>
+        <td>1.2.2</td>
+        <td>2026-04-19</td>
+        <td>Fix gallery caption obstruction; tune tablet/phone breakpoints for gallery, palette, hero, project, approvals, material grids.</td>
+        <td><span class="badge badge-success">success</span></td>
+      </tr>
+      <tr>
+        <td>1.2.1</td>
+        <td>2026-04-19</td>
+        <td>Soltis 502 Proof: real Serge Ferrari images + 21 official color codes.</td>
+        <td><span class="badge badge-success">success</span></td>
+      </tr>
+      <tr>
+        <td>1.2.0</td>
+        <td>2026-04-19</td>
+        <td>Registered <code>material-approval</code> document type; seeded <code>MA26-001</code>; added gallery + color palette to Soltis HTML.</td>
+        <td><span class="badge badge-success">success</span></td>
+      </tr>
+      <tr>
+        <td>1.1.0</td>
+        <td>2026-04-19</td>
+        <td>Added <code>material-approval-template.html</code> and <code>docs/materials/soltis-502-proof.html</code>.</td>
+        <td><span class="badge badge-success">success</span></td>
+      </tr>
+      <tr>
+        <td>1.0.0</td>
+        <td>2026-04-08</td>
+        <td>Initial go-documents Firestore DB, quotation templates (AQ-26001, AQ-26002), freight calculator, migration from areda-product-catalogs.</td>
+        <td><span class="badge badge-success">success</span></td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>

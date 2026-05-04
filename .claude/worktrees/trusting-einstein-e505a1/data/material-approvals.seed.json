@@ -1,0 +1,455 @@
+{
+  "_meta": {
+    "source": "https://www.sergeferrari.com/en/products/",
+    "generated_at": "2026-04-19",
+    "notes": "All PVC-coated polyester products from Serge Ferrari (Précontraint line). Each entry is a 'Material Library' stub: basic metadata now; fetch images + colors per docs/material-approval-SOP.md when you use the record for a specific project RFA. Excludes explicitly PVC-free items (Canatex, Eden Life, Biobrane line)."
+  },
+  "entries": [
+    {
+      "approval_code": "MA26-002",
+      "title": "Soltis 86 Color, Alu",
+      "family": "Soltis",
+      "category": "Fabric — Solar Protection",
+      "main_application": "Exterior solar protection with optimal transparency",
+      "url": "https://www.sergeferrari.com/en/products/soltis/86-color-alu/",
+      "description": "PVC-coated polyester screen fabric offering optimal transparency for exterior solar protection."
+    },
+    {
+      "approval_code": "MA26-003",
+      "title": "Soltis 88 Color, Alu, Proof",
+      "family": "Soltis",
+      "category": "Fabric — Solar Protection (Waterproof option)",
+      "main_application": "Thermal comfort with transparency; Proof variant is waterproof",
+      "url": "https://www.sergeferrari.com/en/products/soltis/88-color-alu-proof/",
+      "description": "PVC-coated polyester. Combination of thermal comfort and transparency; Proof version adds waterproofing for overhead applications."
+    },
+    {
+      "approval_code": "MA26-004",
+      "title": "Soltis 92 Color, Alu, Opaque Alu",
+      "family": "Soltis",
+      "category": "Fabric — Solar Protection",
+      "main_application": "Maximal thermal and visual performance; opaque variants available",
+      "url": "https://www.sergeferrari.com/en/products/soltis/92-color-alu-opaque-alu/",
+      "description": "PVC-coated polyester. High thermal and visual performance with color and aluminized back-face options."
+    },
+    {
+      "approval_code": "MA26-005",
+      "title": "Soltis 96 Color, Proof",
+      "family": "Soltis",
+      "category": "Fabric — Solar Protection (Waterproof)",
+      "main_application": "Micro-perforated screen for fresher air on terraces",
+      "url": "https://www.sergeferrari.com/en/products/soltis/96-color-proof/",
+      "description": "PVC-coated polyester micro-perforated screen for terrace and facade applications. Proof variant is waterproof."
+    },
+    {
+      "approval_code": "MA26-006",
+      "title": "Soltis 99 Color, Alu, White, LowE, Opaque",
+      "family": "Soltis",
+      "category": "Fabric — Solar Protection",
+      "main_application": "Performance and design for indoor/outdoor solar comfort; LowE for thermal reflectance",
+      "url": "https://www.sergeferrari.com/en/products/soltis/99-color-alu-white-lowe-opaque/",
+      "description": "PVC-coated polyester. Multiple finish families: color, aluminized, white, LowE, and opaque."
+    },
+    {
+      "approval_code": "MA26-007",
+      "title": "Soltis 622 Opaque Color",
+      "family": "Soltis",
+      "category": "Fabric — Blackout",
+      "main_application": "Opaque solar protection with matte finish",
+      "url": "https://www.sergeferrari.com/en/products/soltis/622-opaque-color/",
+      "description": "PVC-coated polyester opaque fabric with exceptional resistance, durability, and matte finish."
+    },
+    {
+      "approval_code": "MA26-008",
+      "title": "Soltis Touch Color",
+      "family": "Soltis",
+      "category": "Fabric — Interior Solar Protection",
+      "main_application": "Interior light filtering with soft tactile finish",
+      "url": "https://www.sergeferrari.com/en/products/soltis/touch-color/",
+      "description": "PVC-coated polyester interior fabric that filters light with perfect clarity and a tactile finish."
+    },
+    {
+      "approval_code": "MA26-009",
+      "title": "Soltis Veozip Color",
+      "family": "Soltis",
+      "category": "Fabric — Solar Protection with Zip System",
+      "main_application": "Zip-integrated exterior screen for enhanced ventilation",
+      "url": "https://www.sergeferrari.com/en/products/soltis/veozip-color/",
+      "description": "PVC-coated polyester designed for zip-on-track screens, delivering ventilation with solar protection."
+    },
+    {
+      "approval_code": "MA26-010",
+      "title": "Soltis Loop Sunmate",
+      "family": "Soltis",
+      "category": "Fabric — Interior Solar Protection (Recycled)",
+      "main_application": "Interior solar protection using recycled-content Loop yarns",
+      "url": "https://www.sergeferrari.com/en/products/soltis/loop-sunmate/",
+      "description": "First-generation recycled-based Soltis for interior solar protection. PVC-coated on recycled polyester yarns."
+    },
+    {
+      "approval_code": "MA26-011",
+      "title": "Soltis B28100 Safe Color",
+      "family": "Soltis",
+      "category": "Fabric — Solar Protection (Safety)",
+      "main_application": "Elegant solar protection for offices & homes with safety properties",
+      "url": "https://www.sergeferrari.com/en/products/soltis/b28100-safe-color/",
+      "description": "PVC-coated polyester fabric with safety-grade fire performance for office and residential solar control."
+    },
+
+    {
+      "approval_code": "MA26-012",
+      "title": "Tenseo Xtrem TX30 Series",
+      "family": "Tenseo",
+      "category": "Tensile Architecture Membrane",
+      "main_application": "High-performance tensile membranes across 5 weight variants",
+      "url": "https://www.sergeferrari.com/en/products/tenseo/xtrem-tx30-series/",
+      "description": "PVC-coated polyester Précontraint membrane family for high-stress tensile structures."
+    },
+    {
+      "approval_code": "MA26-013",
+      "title": "Tenseo Advanced S2 Series",
+      "family": "Tenseo",
+      "category": "Tensile Architecture Membrane",
+      "main_application": "Versatile tensile membranes — 6 configurations incl. HTL",
+      "url": "https://www.sergeferrari.com/en/products/tenseo/advanced-s2-series/",
+      "description": "PVC-coated polyester S2 membrane family covering a wide range of architectural tensile applications."
+    },
+    {
+      "approval_code": "MA26-014",
+      "title": "Tenseo Frontside 381",
+      "family": "Tenseo / Frontside",
+      "category": "Facade Membrane — Solar Control Mesh",
+      "main_application": "Solar-control facade mesh preserving outward visibility",
+      "url": "https://www.sergeferrari.com/en/products/tenseo/frontside-381/",
+      "description": "PVC-coated polyester mesh membrane for ventilated facades with daylight and visibility control."
+    },
+    {
+      "approval_code": "MA26-015",
+      "title": "Tenseo Frontside 371",
+      "family": "Tenseo / Frontside",
+      "category": "Facade Membrane",
+      "main_application": "Creative facade membrane for design-led cladding",
+      "url": "https://www.sergeferrari.com/en/products/tenseo/frontside-371/",
+      "description": "PVC-coated polyester facade membrane supporting custom prints and architectural expression."
+    },
+    {
+      "approval_code": "MA26-016",
+      "title": "Tenseo Frontside TXM 50",
+      "family": "Tenseo / Frontside",
+      "category": "Facade Membrane — Solar Control",
+      "main_application": "Solar-control facade membrane with high outward visibility",
+      "url": "https://www.sergeferrari.com/en/products/tenseo/frontside-txm-50/",
+      "description": "PVC-coated polyester facade membrane engineered for solar control while maintaining visibility."
+    },
+
+    {
+      "approval_code": "MA26-017",
+      "title": "Stamoid Easy",
+      "family": "Stamoid",
+      "category": "Marine Fabric",
+      "main_application": "Boat covers, protective marine fabric — easy to clean",
+      "url": "https://www.sergeferrari.com/en/products/stamoid/easy/",
+      "description": "PVC-coated polyester marine fabric engineered for easy cleaning and chemical resistance."
+    },
+    {
+      "approval_code": "MA26-018",
+      "title": "Stamoid Heavy Cover",
+      "family": "Stamoid",
+      "category": "Marine Fabric — Heavy Duty",
+      "main_application": "Maximum-strength cover fabric for demanding maritime conditions",
+      "url": "https://www.sergeferrari.com/en/products/stamoid/heavy-cover/",
+      "description": "PVC-coated polyester with high tensile strength for heavy-duty marine and industrial covers."
+    },
+    {
+      "approval_code": "MA26-019",
+      "title": "Stamoid Light",
+      "family": "Stamoid",
+      "category": "Marine Fabric — Lightweight",
+      "main_application": "Lightweight removable boat covers",
+      "url": "https://www.sergeferrari.com/en/products/stamoid/light/",
+      "description": "Lightweight PVC-coated polyester fabric for removable marine covers and travel-folded applications."
+    },
+    {
+      "approval_code": "MA26-020",
+      "title": "Stamoid Top",
+      "family": "Stamoid",
+      "category": "Marine Fabric — Premium",
+      "main_application": "Upper-deck / bimini; UPF 50+ 100% UV protection",
+      "url": "https://www.sergeferrari.com/en/products/stamoid/top/",
+      "description": "Premium PVC-coated polyester marine fabric with UPF 50+ and long-term UV stability."
+    },
+
+    {
+      "approval_code": "MA26-021",
+      "title": "Flexlight 1015 Translucent",
+      "family": "Flexlight",
+      "category": "Modular Structure Membrane — Translucent",
+      "main_application": "Versatile translucent membrane for tents/modular structures",
+      "url": "https://www.sergeferrari.com/en/products/flexlight/1015-translucent/",
+      "description": "PVC-coated polyester translucent membrane for general modular/tent applications."
+    },
+    {
+      "approval_code": "MA26-022",
+      "title": "Flexlight 1616 Translucent",
+      "family": "Flexlight",
+      "category": "Modular Structure Membrane — Heavy",
+      "main_application": "All-climate halls and modular structures",
+      "url": "https://www.sergeferrari.com/en/products/flexlight/1616-translucent/",
+      "description": "PVC-coated polyester heavy translucent membrane for large halls across climate zones."
+    },
+    {
+      "approval_code": "MA26-023",
+      "title": "Flexlight 1673 Opaque",
+      "family": "Flexlight",
+      "category": "Modular Structure Membrane — Blackout",
+      "main_application": "High-quality blackout membrane for the event industry",
+      "url": "https://www.sergeferrari.com/en/products/flexlight/1673-opaque/",
+      "description": "PVC-coated polyester opaque membrane for event and studio blackout applications."
+    },
+    {
+      "approval_code": "MA26-024",
+      "title": "Flexlight 1515 Opaque",
+      "family": "Flexlight",
+      "category": "Modular Structure Membrane — Blackout",
+      "main_application": "Classic blackout membrane adaptable to any environment",
+      "url": "https://www.sergeferrari.com/en/products/flexlight/1515-opaque/",
+      "description": "PVC-coated polyester classic blackout membrane for structures and event applications."
+    },
+    {
+      "approval_code": "MA26-025",
+      "title": "Flexlight 1005 Translucent",
+      "family": "Flexlight",
+      "category": "Modular Structure Membrane — Lightweight",
+      "main_application": "Lightweight membrane ideal for 300 cm garden tents",
+      "url": "https://www.sergeferrari.com/en/products/flexlight/1005-translucent/",
+      "description": "PVC-coated polyester lightweight translucent membrane for compact modular tents."
+    },
+    {
+      "approval_code": "MA26-026",
+      "title": "Flexlight 1017 Translucent",
+      "family": "Flexlight",
+      "category": "Modular Structure Membrane — Premium",
+      "main_application": "Premium translucent membrane for tents",
+      "url": "https://www.sergeferrari.com/en/products/flexlight/1017-translucent/",
+      "description": "PVC-coated polyester premium translucent membrane with enhanced durability."
+    },
+    {
+      "approval_code": "MA26-027",
+      "title": "Flexlight 502 S2 Translucent",
+      "family": "Flexlight",
+      "category": "Modular Structure Membrane",
+      "main_application": "Elegant finish with minimal maintenance",
+      "url": "https://www.sergeferrari.com/en/products/flexlight/502-s2-translucent/",
+      "description": "PVC-coated polyester S2 membrane with aesthetic finish and low maintenance profile."
+    },
+    {
+      "approval_code": "MA26-028",
+      "title": "Flexlight 402 Translucent & HT",
+      "family": "Flexlight",
+      "category": "Modular Structure Membrane — High Translucency",
+      "main_application": "High-translucency membrane; HT variant for demanding applications",
+      "url": "https://www.sergeferrari.com/en/products/flexlight/402-translucent-ht/",
+      "description": "PVC-coated polyester with high translucency; HT variant for high-tension applications."
+    },
+    {
+      "approval_code": "MA26-029",
+      "title": "Flexlight 782 Translucent & Opaque",
+      "family": "Flexlight",
+      "category": "Modular Structure Membrane",
+      "main_application": "Long lifetime; lightweight; easy to weld",
+      "url": "https://www.sergeferrari.com/en/products/flexlight/782-translucent-opaque/",
+      "description": "PVC-coated polyester membrane optimized for weldability and long service life."
+    },
+    {
+      "approval_code": "MA26-030",
+      "title": "Flexlight 832 S2 Translucent & HT",
+      "family": "Flexlight",
+      "category": "Modular Structure Membrane — Heavy",
+      "main_application": "Long-lasting heavy membrane; HT for high-tension",
+      "url": "https://www.sergeferrari.com/en/products/flexlight/832-s2-translucent-ht/",
+      "description": "PVC-coated polyester heavy S2 membrane with translucent and HT options."
+    },
+    {
+      "approval_code": "MA26-031",
+      "title": "Flexlight 6002 Color, Bicolor, Opaque",
+      "family": "Flexlight",
+      "category": "Modular Structure Membrane — Color",
+      "main_application": "Long lifetime with textile appearance; color + bicolor + opaque",
+      "url": "https://www.sergeferrari.com/en/products/flexlight/6002-color-bicolor-opaque/",
+      "description": "PVC-coated polyester color membrane in mono, bi-color, and opaque finishes."
+    },
+    {
+      "approval_code": "MA26-032",
+      "title": "Flexlight 602 Translucent & Opaque",
+      "family": "Flexlight",
+      "category": "Modular Structure Membrane",
+      "main_application": "Best weight-to-opacity ratio",
+      "url": "https://www.sergeferrari.com/en/products/flexlight/602-translucent-opaque/",
+      "description": "PVC-coated polyester membrane offering an optimized weight-to-opacity ratio."
+    },
+
+    {
+      "approval_code": "MA26-033",
+      "title": "Batyline Net Medium",
+      "family": "Batyline",
+      "category": "Outdoor Furniture Mesh",
+      "main_application": "Outdoor furniture mesh — medium yarn gauge",
+      "url": "https://www.sergeferrari.com/en/products/batyline/net-medium/",
+      "description": "PVC-coated polyester mesh yarn for outdoor furniture — medium weight."
+    },
+    {
+      "approval_code": "MA26-034",
+      "title": "Batyline Net Light",
+      "family": "Batyline",
+      "category": "Outdoor Furniture Mesh",
+      "main_application": "Outdoor furniture mesh — light yarn gauge",
+      "url": "https://www.sergeferrari.com/en/products/batyline/net-light/",
+      "description": "PVC-coated polyester mesh yarn for outdoor furniture — light weight."
+    },
+    {
+      "approval_code": "MA26-035",
+      "title": "Batyline Lounge",
+      "family": "Batyline",
+      "category": "Outdoor Furniture Fabric",
+      "main_application": "Simple elegance with Batyline performance",
+      "url": "https://www.sergeferrari.com/en/products/batyline/lounge/",
+      "description": "PVC-coated polyester lounge fabric for outdoor furniture."
+    },
+    {
+      "approval_code": "MA26-036",
+      "title": "Batyline Duo",
+      "family": "Batyline",
+      "category": "Outdoor Furniture Fabric",
+      "main_application": "Sophisticated color depth with optional twisted-yarn effect",
+      "url": "https://www.sergeferrari.com/en/products/batyline/duo/",
+      "description": "PVC-coated polyester two-tone fabric for premium outdoor furniture."
+    },
+    {
+      "approval_code": "MA26-037",
+      "title": "Batyline Duo FR",
+      "family": "Batyline",
+      "category": "Outdoor Furniture Fabric — Fire-Retardant",
+      "main_application": "FR variant of Duo for contract applications",
+      "url": "https://www.sergeferrari.com/en/products/batyline/duo-fr/",
+      "description": "Fire-retardant PVC-coated polyester fabric for contract outdoor furniture."
+    },
+    {
+      "approval_code": "MA26-038",
+      "title": "Batyline Duo Twist",
+      "family": "Batyline",
+      "category": "Outdoor Furniture Fabric",
+      "main_application": "Twisted-yarn design variant of Duo",
+      "url": "https://www.sergeferrari.com/en/products/batyline/duo-twist/",
+      "description": "Twisted-yarn variant of Batyline Duo — PVC-coated polyester for outdoor furniture."
+    },
+    {
+      "approval_code": "MA26-039",
+      "title": "Batyline Iso",
+      "family": "Batyline",
+      "category": "Outdoor Furniture Fabric — Classic",
+      "main_application": "Reference outdoor furniture mesh, in production 30+ years",
+      "url": "https://www.sergeferrari.com/en/products/batyline/iso/",
+      "description": "Classic PVC-coated polyester mesh fabric for outdoor furniture."
+    },
+    {
+      "approval_code": "MA26-040",
+      "title": "Batyline Iso FR",
+      "family": "Batyline",
+      "category": "Outdoor Furniture Fabric — Fire-Retardant",
+      "main_application": "Fire-retardant variant of Iso for contract applications",
+      "url": "https://www.sergeferrari.com/en/products/batyline/iso-fr/",
+      "description": "Fire-retardant PVC-coated polyester mesh for contract outdoor furniture."
+    },
+    {
+      "approval_code": "MA26-041",
+      "title": "[Stam]Skin Top",
+      "family": "Batyline / Stamskin",
+      "category": "Composite Upholstery",
+      "main_application": "Very long-lasting composite upholstery for demanding applications",
+      "url": "https://www.sergeferrari.com/en/products/batyline/stamskin-top/",
+      "description": "PVC-coated composite upholstery material with long service life."
+    },
+    {
+      "approval_code": "MA26-042",
+      "title": "[Stam]Skin Zen",
+      "family": "Batyline / Stamskin",
+      "category": "Composite Upholstery — Hygiene",
+      "main_application": "Upholstery for strict hygiene and cleaning requirements",
+      "url": "https://www.sergeferrari.com/en/products/batyline/stamskin-zen/",
+      "description": "PVC-coated composite upholstery for hygiene-sensitive environments (healthcare, hospitality)."
+    },
+
+    {
+      "approval_code": "MA26-043",
+      "title": "Seemee Decolit — Tarpaulin Supreme",
+      "family": "Seemee Decolit",
+      "category": "Visual Communication — Tarpaulin",
+      "main_application": "Large-format digital print tarpaulin for outdoor signage",
+      "url": "https://www.sergeferrari.com/en/products/seemee-decolit/tarpaulin/",
+      "description": "PVC-coated polyester tarpaulin for large-format outdoor digital printing."
+    },
+    {
+      "approval_code": "MA26-044",
+      "title": "Seemee Decolit — Loop (Mesh & Frontlit Light)",
+      "family": "Seemee Decolit",
+      "category": "Visual Communication — Recycled",
+      "main_application": "Recycled-content mesh + frontlit fabrics for large-format advertising",
+      "url": "https://www.sergeferrari.com/en/products/seemee-decolit/loop/",
+      "description": "PVC-coated polyester with recycled content — mesh and frontlit light variants for advertising."
+    },
+    {
+      "approval_code": "MA26-045",
+      "title": "Seemee Decolit — Frontlit Range",
+      "family": "Seemee Decolit",
+      "category": "Visual Communication — Frontlit",
+      "main_application": "Frontlit backlit banner fabrics: Ultra Matt, Matt, Standard Easy, Night+Day",
+      "url": "https://www.sergeferrari.com/en/products/seemee-decolit/frontlit/",
+      "description": "PVC-coated polyester frontlit fabrics for color-intense banners and displays."
+    },
+    {
+      "approval_code": "MA26-046",
+      "title": "Seemee Decolit — Mesh Range",
+      "family": "Seemee Decolit",
+      "category": "Visual Communication — Mesh",
+      "main_application": "Mesh banner fabrics: Extra, Standard, Premium, Supreme",
+      "url": "https://www.sergeferrari.com/en/products/seemee-decolit/mesh/",
+      "description": "PVC-coated polyester mesh banner fabrics with dimensional stability for event structures."
+    },
+    {
+      "approval_code": "MA26-047",
+      "title": "Seemee Decolit — Pure! (Insight Light & Heavy)",
+      "family": "Seemee Decolit",
+      "category": "Visual Communication — Premium",
+      "main_application": "Premium printable fabrics for high print quality",
+      "url": "https://www.sergeferrari.com/en/products/seemee-decolit/pure/",
+      "description": "PVC-coated polyester premium printable fabrics — Insight Light and Heavy variants."
+    },
+    {
+      "approval_code": "MA26-048",
+      "title": "Seemee Decolit — Backlit (Supreme & Value Premium FR)",
+      "family": "Seemee Decolit",
+      "category": "Visual Communication — Backlit",
+      "main_application": "Backlit banners for illuminated signage",
+      "url": "https://www.sergeferrari.com/en/products/seemee-decolit/backlit/",
+      "description": "PVC-coated polyester backlit banner fabrics including an FR (fire-retardant) premium variant."
+    },
+    {
+      "approval_code": "MA26-049",
+      "title": "Seemee Decolit — 411, 251 & 251 BW",
+      "family": "Seemee Decolit",
+      "category": "Visual Communication — Indoor",
+      "main_application": "No-curl indoor banner/print fabrics",
+      "url": "https://www.sergeferrari.com/en/products/seemee-decolit/411-251-251-bw/",
+      "description": "PVC-coated polyester indoor banner fabrics with no-curl behavior — three weight/finish variants."
+    },
+    {
+      "approval_code": "MA26-050",
+      "title": "Seemee Decolit — Signage (II, IV Heavy, IV Light)",
+      "family": "Seemee Decolit",
+      "category": "Visual Communication — Signage",
+      "main_application": "Dedicated signage fabrics for roll-ups, banners, and indoor displays",
+      "url": "https://www.sergeferrari.com/en/products/seemee-decolit/signage/",
+      "description": "PVC-coated polyester signage fabrics for indoor roll-ups and banners."
+    }
+  ]
+}
