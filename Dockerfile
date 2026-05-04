@@ -12,7 +12,9 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src/ ./src/
-COPY docs/reports/material-submission-template.html docs/reports/drawing-submission-template.html ./docs/reports/
+# Bake the whole docs/ tree so the Flask /docs/<path> route can serve hub,
+# build-summary, summaries, and the submission templates from one place.
+COPY docs/ ./docs/
 
 EXPOSE 8080
 ENV PORT=8080

@@ -16,7 +16,7 @@ from datetime import datetime, timezone
 
 from flask import (
     Flask, Response, abort, jsonify, redirect,
-    render_template_string, request,
+    render_template_string, request, send_from_directory,
 )
 from google.cloud import firestore, storage
 
@@ -90,6 +90,31 @@ def index():
 @app.route("/healthz")
 def healthz():
     return "ok"
+
+
+# ---------- static docs (served via gateway at /go-documents/docs/...) ----------
+
+# Repo-relative docs/ folder, baked into the image at /app/docs/.
+# Restricted to file types that legitimately ship to end users; no path
+# traversal possible because Flask's send_from_directory normalizes.
+_DOCS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs")
+_DOCS_ALLOWED_EXT = {".html", ".md", ".css", ".js", ".png", ".jpg", ".jpeg",
+                     ".svg", ".pdf", ".json", ".csv", ".txt"}
+
+
+@app.route("/docs/<path:filename>")
+def docs_static(filename: str):
+    """Serve files baked under ./docs/ (hub, build-summary, summaries, reports).
+
+    Required because go-documents is registered as a `cloud_run` backend in the
+    gateway — the gateway proxies every path (including /docs/...) to this
+    Flask app, so Flask must own that route. Without it, gateway-served docs
+    URLs return Flask's default 404 page.
+    """
+    ext = os.path.splitext(filename)[1].lower()
+    if ext not in _DOCS_ALLOWED_EXT:
+        abort(404)
+    return send_from_directory(_DOCS_DIR, filename, headers=NOINDEX_HEADERS)
 
 
 # ========================================================================
