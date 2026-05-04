@@ -114,7 +114,10 @@ def docs_static(filename: str):
     ext = os.path.splitext(filename)[1].lower()
     if ext not in _DOCS_ALLOWED_EXT:
         abort(404)
-    return send_from_directory(_DOCS_DIR, filename, headers=NOINDEX_HEADERS)
+    resp = send_from_directory(_DOCS_DIR, filename)
+    for k, v in NOINDEX_HEADERS.items():
+        resp.headers[k] = v
+    return resp
 
 
 # ========================================================================
