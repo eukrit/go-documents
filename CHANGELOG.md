@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.3] - 2026-05-04
+
+### Added — Signature Service workflow summary page
+- New page `docs/summaries/signature-service.html` covering the end-to-end
+  submission sign-off workflow: bilingual EN+TH deemed-accepted clause
+  (7 working days), Google Drive native eSignature workflow (manual UI step),
+  Slack interactivity fan-out via slack-router with `submission_*` action_id
+  prefix routing, full stack summary, and configuration reference.
+- Reachable via the gateway at
+  `https://gateway.goco.bz/go-documents/docs/summaries/signature-service.html`
+  after Google sign-in (admin visibility, eukrit@goco.bz).
+- Hub regenerated to surface the new summary in the project hub.
+
+(Originally added under go-access-gateway in that repo's v0.6.3, but moved
+here in v0.6.3.1 of go-access-gateway because go-access-gateway itself was
+not registered as a project in the gateway's project DB.)
+
 ## [1.3.2] - 2026-04-26
 
 ### Changed — Drive folder ID + Slack signing secret auto-load

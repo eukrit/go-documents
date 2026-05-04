@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signature Service — GO Submissions Workflow</title>
+<style>
+  :root { --primary: #2563eb; --success: #16a34a; --warn: #d97706; --muted: #64748b; --bg: #f8fafc; --card: #fff; --border: #e2e8f0; --navy: #1e293b; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--navy); padding: 2rem; max-width: 1100px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 2rem; }
+  header h1 { font-size: 1.75rem; color: var(--primary); }
+  header p { color: var(--muted); margin-top: .25rem; }
+  .flow { display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; align-items: stretch; margin: 1.5rem 0 2.5rem; }
+  .node { background: var(--card); border: 2px solid var(--border); border-radius: 10px; padding: .9rem 1.1rem; min-width: 170px; max-width: 200px; text-align: center; display: flex; flex-direction: column; }
+  .node.active { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+  .node.manual { border-color: var(--warn); background: #fffbeb; }
+  .node.done { border-color: var(--success); }
+  .node h3 { font-size: .9rem; margin-bottom: .35rem; }
+  .node p { font-size: .75rem; color: var(--muted); flex: 1; }
+  .badge { display: inline-block; font-size: .62rem; padding: 2px 8px; border-radius: 10px; margin-top: .55rem; font-weight: 600; align-self: center; }
+  .badge.impl { background: #dcfce7; color: #166534; }
+  .badge.manual { background: #fef3c7; color: #92400e; }
+  .arrow { display: flex; align-items: center; font-size: 1.4rem; color: var(--muted); padding: 0 .25rem; }
+  section { background: var(--card); border-radius: 10px; padding: 1.5rem; margin-bottom: 1.25rem; border: 1px solid var(--border); }
+  section h2 { font-size: 1.05rem; margin-bottom: .9rem; color: var(--primary); }
+  section p { font-size: .9rem; line-height: 1.55; margin-bottom: .5rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+  th, td { padding: .55rem .7rem; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-weight: 600; color: var(--muted); background: var(--bg); }
+  code { background: var(--bg); padding: 1px 5px; border-radius: 3px; font-size: .82rem; color: #be185d; }
+  .status-done { color: var(--success); font-weight: 600; }
+  .status-manual { color: var(--warn); font-weight: 600; }
+  ul { padding-left: 1.25rem; font-size: .9rem; line-height: 1.6; }
+  ul li { margin-bottom: .25rem; }
+  .pill { display: inline-block; font-size: .7rem; padding: 2px 8px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border); margin-right: .35rem; color: var(--muted); }
+  blockquote { border-left: 3px solid var(--warn); padding: .6rem 1rem; background: #fffbeb; font-size: .85rem; margin: .5rem 0; }
+  footer { text-align: center; color: var(--muted); font-size: .75rem; margin-top: 2rem; }
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Signature Service — GO Submissions Workflow</h1>
+  <p>Material &amp; drawing approval sign-off via Google Drive eSignature + bilingual deemed-accepted clause + Slack interactivity routing</p>
+</header>
+
+<section>
+  <h2>The problem</h2>
+  <p>Consultants and clients sit on material/drawing submissions. Without a contractual response window, the contractor's schedule slips while waiting for approval. We needed (1) a low-friction signature path that doesn't require leaving Google Workspace, and (2) a contractual fallback for when the customer simply doesn't respond.</p>
+</section>
+
+<section>
+  <h2>End-to-end flow</h2>
+  <div class="flow">
+    <div class="node done">
+      <h3>1. Submission created</h3>
+      <p><code>POST /api/submissions</code> in go-documents</p>
+      <span class="badge impl">automated</span>
+    </div>
+    <div class="arrow">→</div>
+    <div class="node done">
+      <h3>2. PDF rendered</h3>
+      <p>WeasyPrint, EN+TH clause auto-injected</p>
+      <span class="badge impl">automated</span>
+    </div>
+    <div class="arrow">→</div>
+    <div class="node done">
+      <h3>3. Email + Drive mirror</h3>
+      <p>Gmail send to consultant; PDF copied to <em>Submissions GO/&lt;SO&gt;/</em></p>
+      <span class="badge impl">automated</span>
+    </div>
+    <div class="arrow">→</div>
+    <div class="node done">
+      <h3>4. Slack card</h3>
+      <p>Posted to <code>#submission-materials</code> / <code>#submission-drawings</code> with action buttons</p>
+      <span class="badge impl">automated</span>
+    </div>
+    <div class="arrow">→</div>
+    <div class="node manual">
+      <h3>5. Drive eSignature</h3>
+      <p>PM clicks "Request signature" in Drive UI</p>
+      <span class="badge manual">manual</span>
+    </div>
+    <div class="arrow">→</div>
+    <div class="node done">
+      <h3>6. Approve / Reject in Slack</h3>
+      <p>Button click → slack-router → go-documents <code>/slack/interactivity</code></p>
+      <span class="badge impl">automated</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The "Deemed Accepted" clause (bilingual)</h2>
+  <p>Appears verbatim on every submission PDF AND in every submission email body. Single source of truth: <code>go-documents/src/submission_clause.py</code>. Default window <strong>7 working days</strong>, configurable via <code>SUBMISSION_RESPONSE_DAYS</code> env var.</p>
+  <blockquote>
+    <strong>EN:</strong> Please review and return this submission with written comments within 7 working days of the date above. If no written comments or rejection are received within that period, this submission shall be deemed accepted in full and the contractor will proceed accordingly.
+  </blockquote>
+  <blockquote lang="th">
+    <strong>TH:</strong> กรุณาตรวจสอบและส่งคืนเอกสารฉบับนี้พร้อมความคิดเห็นเป็นลายลักษณ์อักษรภายใน 7 วันทำการนับจากวันที่ระบุข้างต้น หากไม่ได้รับความคิดเห็นหรือการปฏิเสธเป็นลายลักษณ์อักษรภายในระยะเวลาดังกล่าว ให้ถือว่าเอกสารนี้ได้รับการอนุมัติโดยสมบูรณ์ และผู้รับเหมาจะดำเนินการตามที่เสนอต่อไป
+  </blockquote>
+</section>
+
+<section>
+  <h2>Signature service choice</h2>
+  <p>We use <strong>Google Workspace native eSignature</strong> (Drive + Docs, GA April 2024 for PDFs). It's bundled with our Business Standard plan, no third-party data sharing, and the signed PDF returns to Drive automatically with an audit certificate. <strong>Trade-off:</strong> there is no public API for "send for signature" yet (as of 2026-04), so step 5 is a manual UI click. Cloud Run mirrors the PDF to Drive automatically so the sign-out is one click away.</p>
+  <table>
+    <thead><tr><th>Option</th><th>Drive integration</th><th>API</th><th>Cost</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Google Workspace eSignature</strong></td><td>Native</td><td>None</td><td>Included in Business Standard</td><td class="status-done">Chosen</td></tr>
+      <tr><td>Dropbox Sign</td><td>Marketplace add-on</td><td>REST + Python SDK</td><td>~$25/user/mo</td><td>v1.4 fallback if API automation needed</td></tr>
+      <tr><td>DocuSign</td><td>Add-on</td><td>REST</td><td>$15–65/user/mo</td><td>Heavier, pricier</td></tr>
+      <tr><td>PandaDoc</td><td>Add-on</td><td>REST (Business plan)</td><td>$65/user/mo</td><td>Overkill</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Slack interactivity wiring</h2>
+  <p>Submission Slack cards ship with <strong>Approve / Reject / Comment / Open / Drive (Sign)</strong> buttons. Each carries an <code>action_id</code> prefixed <code>submission_*</code>. Slack delivers button clicks to the central <code>slack-router</code> Cloud Run service, which forwards by prefix match to <code>go-documents/slack/interactivity</code>.</p>
+  <table>
+    <thead><tr><th>action_id prefix</th><th>Forwarded to</th><th>Effect</th></tr></thead>
+    <tbody>
+      <tr><td><code>submission_approve_*</code></td><td>go-documents <code>/slack/interactivity</code></td><td>Status → <em>approved</em>, Pub/Sub event, Slack confirms</td></tr>
+      <tr><td><code>submission_reject_*</code></td><td>go-documents <code>/slack/interactivity</code></td><td>Status → <em>rejected</em>, Pub/Sub event, Slack confirms</td></tr>
+      <tr><td><code>submission_comment_*</code></td><td>go-documents <code>/slack/interactivity</code></td><td>Modal opens for reviewer remarks</td></tr>
+      <tr><td><code>submission_open_*</code></td><td>(URL button)</td><td>Opens dashboard at <code>/submissions/&lt;sid&gt;</code></td></tr>
+      <tr><td><code>submission_drive_*</code></td><td>(URL button)</td><td>Opens the Drive PDF for manual "Request signature"</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Stack summary</h2>
+  <table>
+    <thead><tr><th>Layer</th><th>Service</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Submission API + PDF render</td><td>go-documents (Cloud Run, asia-southeast1)</td><td class="status-done">live · v1.3.2</td></tr>
+      <tr><td>Drive PDF mirror</td><td>"Submissions GO" folder (id <code>1gAhGAI94…ixm-Vh</code>)</td><td class="status-done">live</td></tr>
+      <tr><td>Email send</td><td>Gmail DWD as <code>eukrit@goco.bz</code></td><td class="status-done">live</td></tr>
+      <tr><td>Slack card</td><td><code>#submission-materials</code> / <code>#submission-drawings</code></td><td class="status-done">live</td></tr>
+      <tr><td>Slack button dispatcher</td><td>data-communications/slack-router</td><td class="status-done">live · revision 00005</td></tr>
+      <tr><td>eSignature (manual)</td><td>Google Workspace Drive native</td><td class="status-manual">manual UI step</td></tr>
+      <tr><td>Bilingual clause</td><td><code>submission_clause.py</code> (EN+TH)</td><td class="status-done">live</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Configuration</h2>
+  <ul>
+    <li><span class="pill">env</span><code>SUBMISSION_RESPONSE_DAYS</code> — response window (default 7 working days)</li>
+    <li><span class="pill">env</span><code>SUBMISSIONS_DRIVE_FOLDER_ID</code> — Drive folder for PDF mirror</li>
+    <li><span class="pill">env</span><code>SUBMISSION_SENDER</code> — DWD impersonation user (<code>eukrit@goco.bz</code>)</li>
+    <li><span class="pill">env</span><code>SLACK_SIGNING_SECRET_NAME</code> — Secret Manager key for signature verification</li>
+    <li><span class="pill">SM</span><code>slack-bot-token</code> — Slack bot token (chat.postMessage, modal open)</li>
+    <li><span class="pill">SM</span><code>slack-signing-secret</code> — verifies inbound interactivity payloads</li>
+    <li><span class="pill">DWD</span>scopes: <code>gmail.send</code>, <code>gmail.modify</code>, <code>gmail.labels</code>, <code>drive.file</code></li>
+  </ul>
+</section>
+
+<section>
+  <h2>Open follow-ups</h2>
+  <ul>
+    <li>v1.4: Cloud Scheduler reminder fires <code>RESPONSE_DAYS</code> after send (uses same clause module + slack-router fan-out).</li>
+    <li>If full automation of "send for signature" becomes a hard requirement, switch step 5 to Dropbox Sign API. Keep Google Workspace eSignature as the manual fallback.</li>
+    <li>Surface <code>driveWebViewLink</code> on the per-project dashboard at <code>/projects/&lt;soRef&gt;</code> so PMs can jump to the manual sign step from the same place they view the submission.</li>
+  </ul>
+</section>
+
+<footer>
+  Source of truth: <a href="https://github.com/eukrit/go-documents/blob/main/CHANGELOG.md">go-documents/CHANGELOG.md</a> v1.3.0 / v1.3.1 / v1.3.2 ·
+  Generated 2026-05-04 · Hosted via gateway.goco.bz/go-documents/
+</footer>
+</body>
+</html>
